@@ -1,0 +1,42 @@
+id: "video-upload-timeout-ios-webview"
+seed_message: |
+  Hi, my students can’t upload video answers in Schoology on iPads. It spins, then fails.
+  Works on desktop. We need this for a test today.
+
+artifacts:
+  har: "artifacts/ios_webview_upload.har"
+  screenshot: "artifacts/upload_error.png"
+
+milestones:
+  - id: M1_goal
+    description: Clarifies user's actual goal/outcome
+    intents_any: [ "ask_for_goal", "clarify_outcome" ]
+  - id: M2_logs
+    description: Requests HAR/network logs or reproduction details
+    intents_any: [ "ask_for_logs", "ask_for_repro" ]
+    on_hit:
+      send_artifacts: [ "har" ]
+  - id: M3_context
+    description: Gathers device/OS/app/webview/file-type details
+    intents_any: [ "ask_for_context" ]
+  - id: M4_solution
+    description: Proposes plausible resolution path
+    intents_any: [ "propose_fix" ]
+
+challenge_injections:
+  - when: "off_track"
+    text: "I’m sure that shouldn’t matter—do you even know what I’m trying to fix?"
+    score_effect:
+      communication: -0.05
+
+rubric:
+  weights:
+    discovery: 0.25 # M1 + M3
+    evidence: 0.25 # M2
+    reasoning: 0.30 # M4 quality
+    communication: 0.20
+  pass_threshold: 0.72
+determinism:
+  temperature: 0.2
+  top_p: 0.9
+  style: "You are a stressed but cooperative teacher. Keep answers short. Do not reveal solution unless asked the right things."
