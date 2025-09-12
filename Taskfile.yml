@@ -1,0 +1,164 @@
+version: '3'
+silent: true
+tasks:
+  default:
+    cmds:
+      - task -l
+    silent: true
+
+  venv:
+    desc: Make a new virtual environment
+    cmds:
+      - python3 -m venv .venv --prompt="ACTIVE_ZENDESK_ROLEPLAY"
+      - source {{.TASKFILE_DIR}}/.venv/bin/activate
+    internal: true
+
+  run:dev:
+    desc: Starts the Django Application, and background workers in a debug state
+    dir: .
+    cmds:
+      - echo "Completing Pre-Start Environment Check For Development..."
+      - source .envrc && python3 .venv/bin/gunicorn -t 1 -w 1 --timeout 120 --worker-class=sync core.wsgi:application --bind 127.0.0.1:{{.CLI_ARGS}} --reload
+      - defer: rm -r ${TEMP_STATIC_DIR}
+    interactive: false
+    silent: false
+
+  install:
+    deps: [ venv ]
+    cmds:
+      - pip install poetry
+      - poetry lock
+      - poetry install --no-root
+    silent: false
+
+  freeze:
+    desc: Pin current dependencies
+    cmds:
+      - doppler run  -- poetry sync
+      - doppler run  -- poetry export --without dev,test --without-hashes --without-urls > ./requirements/base.txt
+      - doppler run  -- poetry export  --without-hashes --without-urls > ./requirements/dev.txt
+    generates:
+      - ./requirements/dev.txt
+      - ./requirements/base.txt
+      - ./poetry.lock
+    sources:
+      - ./poetry.lock
+      - ./requirements/dev.txt
+      - ./requirements/base.txt
+    silent: false
+
+  db_sync:
+    desc: Make and run migrations
+    dir: .
+    cmds:
+      - python3 run/manage.py makemigrations
+      - python3 run/manage.py migrate
+    generates:
+      - ./applications/*/migrations/*.py
+    sources:
+      - ./applications/*/migrations/*.py
+    requires:
+      vars:
+        - DOPPLER_TOKEN
+        - PATH_TO_DB_ROOT_CERT
+
+  collect:
+    dir: .
+
+    desc: Collect static files in to single directory for production
+    cmds:
+      - source .envrc && PYTHONPATH="./core:{{ .TASKFILE_DIR }}/applications/API:{{ .TASKFILE_DIR }}/applications/graphQL:{{ .TASKFILE_DIR }}/applications/frontend:{{ .TASKFILE_DIR }}/common:{{ .TASKFILE_DIR }}/run:{{ .TASKFILE_DIR }}"  python run/manage.py collectstatic --no-input
+
+  run:test:
+    dir: .
+    desc: Run tests
+    cmds:
+      - python3  run/manage.py test applications.API
+
+    requires:
+      vars:
+        - DOPPLER_TOKEN
+        - PATH_TO_DB_ROOT_CERT
+
+  run:prod:
+    dir: .
+
+    desc: Command to Start Production Level Services including Install requirements, apply migrations, then start development server
+    cmds:
+      - echo 'Starting Production Level Services...'
+      - echo 'Installing dependencies'
+      - task: install
+
+      - echo 'Applying migrations...'
+      - task: db_sync
+
+      - echo 'Starting server...'
+      - python3 -m gunicorn --workers=2 --threads=2 core.wsgi:application --bind 0.0.0.0:{{or .CLI_ARGS 8080}}
+
+  schema-check:
+    dir: "{{.TASKFILE_DIR}}"
+
+    desc: Check Models and Serializers for schema compliance with OpenAPI .0 Standards and fail on warnings
+    cmds:
+      - python3 run/manage.py spectacular  --file schema/schema$(date +"%Y-%m-%d").yaml --validate
+    internal: true
+
+  schema:
+    deps: [ schema-check ]
+    dir: "{{.TASKFILE_DIR}}"
+
+    desc: Generate OpenAPI 3.0 schema.yaml file from models and serializers
+    cmds:
+      - .venv/bin/python3 run/manage.py spectacular --file schema/schema$(date +"%Y-%m-%d_%H:%M:%S").yaml
+
+  build-image:
+    desc: Build Docker Image
+    dir: "{{.TASKFILE_DIR}}/.deploy"
+    cmds:
+      - docker buildx build --platform linux/amd64,linux/arm64 --push --build-arg DOPPLER_TOKEN=$DOPPLER_TOKEN -t thedozens:latest .
+    requires:
+      vars:
+        - DOPPLER_TOKEN
+        - PATH_TO_DB_ROOT_CERT
+  lint:lint:
+    desc: Run all linting and formatting tools
+    dir: .
+    cmds:
+      - echo "🔍 Running Python linting and formatting..."
+      - echo "🧹 Running autoflake (unused imports/variables check)..."
+      - .venv/bin/autoflake --check --recursive --remove-all-unused-imports --remove-unused-variables --remove-duplicate-keys --ignore-init-module-imports .
+      - echo "📋 Running isort (import sorting)..."
+      - .venv/bin/isort . --check-only --diff
+      - echo "⚫ Running black (code formatting)..."
+      - .venv/bin/black . --check --diff
+      - echo "🚀 Running ruff (fast linting)..."
+      - .venv/bin/ruff check .
+      - echo "🔧 Running pylint (comprehensive linting)..."
+      - .venv/bin/pylint **/*.py --load-plugins=pylint_django,pylint_celery --django-settings-module=core.settings
+      - echo "🔒 Running bandit (security linting)..."
+      - .venv/bin/bandit -r . -f json --exclude=./tests,./venv,./.venv
+      - echo "🎯 Running mypy (type checking)..."
+      - .venv/bin/mypy .
+      - echo "✅ All linting checks completed!"
+    silent: false
+    interactive: false
+  lint:fix:
+    desc: Automatically fix linting and formatting issues
+    dir: .
+    cmds:
+      - echo "🔧 Auto-fixing Python linting and formatting issues..."
+      - echo "🧹 Running autoflake (removing unused imports/variables)..."
+      - cmd: .venv/bin/autoflake --in-place --recursive --remove-all-unused-imports --remove-unused-variables --remove-duplicate-keys --ignore-init-module-imports .
+        ignore_error: true
+      - echo "📋 Running isort (import sorting)..."
+      - cmd: .venv/bin/isort .
+        ignore_error: true
+      - echo "⚫ Running black (code formatting)..."
+      - cmd: .venv/bin/black .
+        ignore_error: true
+      - echo "🚀 Running ruff (auto-fix)..."
+      - cmd: .venv/bin/ruff check . --fix
+        ignore_error: true
+      - echo "✅ Auto-fix completed! Run 'task lint' to check remaining issues."
+    silent: false
+    interactive: false

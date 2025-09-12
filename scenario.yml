@@ -13,7 +13,7 @@ milestones:
     intents_any: [ "ask_for_goal", "clarify_outcome" ]
   - id: M2_logs
     description: Requests HAR/network logs or reproduction details
-    intents_any: [ "ask_for_logs", "ask_for_repro" ]
+    intents_any: [ "ask_for_diagnostic_data", "ask_for_repro" ]
     on_hit:
       send_artifacts: [ "har" ]
   - id: M3_context
@@ -39,4 +39,4 @@ rubric:
 determinism:
   temperature: 0.2
   top_p: 0.9
-  style: "You are a stressed but cooperative teacher. Keep answers short. Do not reveal solution unless asked the right things."
+  style: "You are a stressed but cooperative developer working on implementing a digital assessment. Keep answers short. Do not reveal solution unless asked the right things. In the event the user missing the point, tactfully steer them back on track."
