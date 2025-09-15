@@ -1,7 +1,6 @@
 id: "video-upload-timeout-ios-webview"
 seed_message: |
-  Hi, my students can’t upload video answers in Schoology on iPads. It spins, then fails.
-  Works on desktop. We need this for a test today.
+  "I can't believe we trusted your APIs to handle such an important assessment. Our instructors spent an entire week creating and testing this complex question type, and the first time we try to use it, it is a royal dumpster fire! My instructors are going to be furious."
 
 artifacts:
   har: "artifacts/ios_webview_upload.har"

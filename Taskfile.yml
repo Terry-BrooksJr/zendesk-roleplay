@@ -14,11 +14,11 @@ tasks:
     internal: true
 
   run:dev:
-    desc: Starts the Django Application, and background workers in a debug state
+    desc: Starts the Application and UI interfaces for local development
     dir: .
     cmds:
       - echo "Completing Pre-Start Environment Check For Development..."
-      - source .envrc && python3 .venv/bin/gunicorn -t 1 -w 1 --timeout 120 --worker-class=sync core.wsgi:application --bind 127.0.0.1:{{.CLI_ARGS}} --reload
+      - source .envrc && doppler run -- python3 app.py & python3 ui.py
       - defer: rm -r ${TEMP_STATIC_DIR}
     interactive: false
     silent: false
@@ -47,28 +47,6 @@ tasks:
       - ./requirements/base.txt
     silent: false
 
-  db_sync:
-    desc: Make and run migrations
-    dir: .
-    cmds:
-      - python3 run/manage.py makemigrations
-      - python3 run/manage.py migrate
-    generates:
-      - ./applications/*/migrations/*.py
-    sources:
-      - ./applications/*/migrations/*.py
-    requires:
-      vars:
-        - DOPPLER_TOKEN
-        - PATH_TO_DB_ROOT_CERT
-
-  collect:
-    dir: .
-
-    desc: Collect static files in to single directory for production
-    cmds:
-      - source .envrc && PYTHONPATH="./core:{{ .TASKFILE_DIR }}/applications/API:{{ .TASKFILE_DIR }}/applications/graphQL:{{ .TASKFILE_DIR }}/applications/frontend:{{ .TASKFILE_DIR }}/common:{{ .TASKFILE_DIR }}/run:{{ .TASKFILE_DIR }}"  python run/manage.py collectstatic --no-input
-
   run:test:
     dir: .
     desc: Run tests
@@ -95,31 +73,14 @@ tasks:
       - echo 'Starting server...'
       - python3 -m gunicorn --workers=2 --threads=2 core.wsgi:application --bind 0.0.0.0:{{or .CLI_ARGS 8080}}
 
-  schema-check:
-    dir: "{{.TASKFILE_DIR}}"
-
-    desc: Check Models and Serializers for schema compliance with OpenAPI .0 Standards and fail on warnings
-    cmds:
-      - python3 run/manage.py spectacular  --file schema/schema$(date +"%Y-%m-%d").yaml --validate
-    internal: true
-
-  schema:
-    deps: [ schema-check ]
-    dir: "{{.TASKFILE_DIR}}"
-
-    desc: Generate OpenAPI 3.0 schema.yaml file from models and serializers
-    cmds:
-      - .venv/bin/python3 run/manage.py spectacular --file schema/schema$(date +"%Y-%m-%d_%H:%M:%S").yaml
-
   build-image:
     desc: Build Docker Image
     dir: "{{.TASKFILE_DIR}}/.deploy"
     cmds:
-      - docker buildx build --platform linux/amd64,linux/arm64 --push --build-arg DOPPLER_TOKEN=$DOPPLER_TOKEN -t thedozens:latest .
+      - docker buildx build --platform linux/amd64,linux/arm64 --push --build-arg DOPPLER_TOKEN=$DOPPLER_TOKEN -t tech-assessment:latest .
     requires:
       vars:
         - DOPPLER_TOKEN
-        - PATH_TO_DB_ROOT_CERT
   lint:lint:
     desc: Run all linting and formatting tools
     dir: .

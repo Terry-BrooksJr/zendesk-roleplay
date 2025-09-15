@@ -7,11 +7,10 @@ Enhanced with session state management for milestones, penalties, and applicatio
 
 import hashlib
 import json
-import os
 import uuid
-from datetime import datetime
-from typing import Any, Dict, List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine    
+from datetime import datetime, timedelta
+from typing import Any, Dict, List
+
 from sqlalchemy import (
     Column,
     DateTime,
@@ -27,7 +26,10 @@ from sqlalchemy import (
 )
 from sqlalchemy.sql import func
 
-engine = create_engine("postgresql+psycopg://assessment_user:tep4XMU8efu*ydv!yqt@db.blackberry-py.dev:5432/assessment_db", future=True)
+engine = create_engine(
+    "postgresql+psycopg://assessment_user:tep4XMU8efu*ydv!yqt@db.blackberry-py.dev:5432/assessment_db",
+    future=True,
+)
 md = MetaData()
 
 sessions = Table(
@@ -40,7 +42,9 @@ sessions = Table(
     Column("ended_at", DateTime, nullable=True),
     Column("elapsed_sec", Float, default=0.0),
     # NEW: Store session state as JSON
-    Column("state_data", Text, nullable=True),  # JSON blob for milestones, penalty, etc.
+    Column(
+        "state_data", Text, nullable=True
+    ),  # JSON blob for milestones, penalty, etc.
     Column("last_updated", DateTime, server_default=func.now()),
 )
 
@@ -82,7 +86,7 @@ def new_session(candidate_label: str, scenario_id: str) -> str:
     """
     sid = str(uuid.uuid4())
     h = hashlib.sha256(f"{candidate_label}".encode()).hexdigest()[:16]
-    
+
     # Initialize empty session state
     initial_state = {
         "milestones": [],
@@ -91,14 +95,14 @@ def new_session(candidate_label: str, scenario_id: str) -> str:
         "last_bot": "",
         "started_at": datetime.now().isoformat(),
     }
-    
+
     with engine.begin() as c:
         c.execute(
             sessions.insert().values(
-                id=sid, 
-                candidate_hash=h, 
+                id=sid,
+                candidate_hash=h,
                 scenario_id=scenario_id,
-                state_data=json.dumps(initial_state)
+                state_data=json.dumps(initial_state),
             )
         )
     return sid
@@ -149,12 +153,12 @@ def get_session(sid: str) -> dict | None:
     """
     with engine.begin() as c:
         result = c.execute(select(sessions).where(sessions.c.id == sid)).first()
-        
+
         if not result:
             return None
-            
+
         session_data = result._asdict()
-        
+
         # Parse JSON state data
         if session_data.get("state_data"):
             try:
@@ -163,21 +167,25 @@ def get_session(sid: str) -> dict | None:
             except (json.JSONDecodeError, TypeError) as e:
                 # Handle corrupted state data gracefully
                 print(f"Warning: Failed to parse state data for session {sid}: {e}")
-                session_data.update({
+                session_data.update(
+                    {
+                        "milestones": [],
+                        "penalty": 0.0,
+                        "transcript": [],
+                        "last_bot": "",
+                    }
+                )
+        else:
+            # Provide defaults if no state data exists
+            session_data.update(
+                {
                     "milestones": [],
                     "penalty": 0.0,
                     "transcript": [],
                     "last_bot": "",
-                })
-        else:
-            # Provide defaults if no state data exists
-            session_data.update({
-                "milestones": [],
-                "penalty": 0.0,
-                "transcript": [],
-                "last_bot": "",
-            })
-            
+                }
+            )
+
         return session_data
 
 
@@ -199,7 +207,11 @@ def update_session(sid: str, state_data: Dict[str, Any]) -> bool:
         required_fields = ["milestones", "penalty", "transcript", "last_bot"]
         for field in required_fields:
             if field not in state_data:
-                state_data[field] = [] if field in ["milestones", "transcript"] else (0.0 if field == "penalty" else "")
+                state_data[field] = (
+                    []
+                    if field in ["milestones", "transcript"]
+                    else (0.0 if field == "penalty" else "")
+                )
 
         # Convert datetime objects to ISO strings for JSON serialization
         json_safe_data = {}
@@ -214,8 +226,7 @@ def update_session(sid: str, state_data: Dict[str, Any]) -> bool:
                 update(sessions)
                 .where(sessions.c.id == sid)
                 .values(
-                    state_data=json.dumps(json_safe_data),
-                    last_updated=datetime.now()
+                    state_data=json.dumps(json_safe_data), last_updated=datetime.now()
                 )
             )
             return result.rowcount > 0
@@ -243,30 +254,28 @@ def add_milestone(sid: str, milestone_id: str, turn_number: int = None) -> bool:
         with engine.begin() as c:
             existing = c.execute(
                 select(milestones).where(
-                    (milestones.c.session_id == sid) & 
-                    (milestones.c.milestone_id == milestone_id)
+                    (milestones.c.session_id == sid)
+                    & (milestones.c.milestone_id == milestone_id)
                 )
             ).first()
-            
+
             if existing:
                 return False  # Milestone already exists
-            
+
             # Add milestone record
             c.execute(
                 milestones.insert().values(
-                    session_id=sid,
-                    milestone_id=milestone_id,
-                    turn_number=turn_number
+                    session_id=sid, milestone_id=milestone_id, turn_number=turn_number
                 )
             )
-            
+
             # Update session state data
             session = get_session(sid)
             if session:
                 current_milestones = session.get("milestones", [])
                 if milestone_id not in current_milestones:
                     current_milestones.append(milestone_id)
-                    
+
                 state_update = {
                     "milestones": current_milestones,
                     "penalty": session.get("penalty", 0.0),
@@ -274,7 +283,7 @@ def add_milestone(sid: str, milestone_id: str, turn_number: int = None) -> bool:
                     "last_bot": session.get("last_bot", ""),
                 }
                 update_session(sid, state_update)
-            
+
         return True
     except Exception as e:
         print(f"Error adding milestone {milestone_id} to session {sid}: {e}")
@@ -293,10 +302,11 @@ def get_session_milestones(sid: str) -> List[Dict[str, Any]]:
     try:
         with engine.begin() as c:
             results = c.execute(
-                select(milestones).where(milestones.c.session_id == sid)
+                select(milestones)
+                .where(milestones.c.session_id == sid)
                 .order_by(milestones.c.achieved_at)
             ).fetchall()
-            
+
             return [result._asdict() for result in results]
     except Exception as e:
         print(f"Error retrieving milestones for session {sid}: {e}")
@@ -315,10 +325,9 @@ def get_session_transcript(sid: str) -> List[Dict[str, Any]]:
     try:
         with engine.begin() as c:
             results = c.execute(
-                select(turns).where(turns.c.session_id == sid)
-                .order_by(turns.c.ts)
+                select(turns).where(turns.c.session_id == sid).order_by(turns.c.ts)
             ).fetchall()
-            
+
             return [result._asdict() for result in results]
     except Exception as e:
         print(f"Error retrieving transcript for session {sid}: {e}")
@@ -336,7 +345,7 @@ def cleanup_old_sessions(days_old: int = 30) -> int:
     """
     try:
         cutoff_date = datetime.now() - timedelta(days=days_old)
-        
+
         with engine.begin() as c:
             # Delete old turns first (foreign key constraint)
             c.execute(
@@ -346,7 +355,7 @@ def cleanup_old_sessions(days_old: int = 30) -> int:
                     )
                 )
             )
-            
+
             # Delete old milestones
             c.execute(
                 milestones.delete().where(
@@ -355,12 +364,12 @@ def cleanup_old_sessions(days_old: int = 30) -> int:
                     )
                 )
             )
-            
+
             # Delete old sessions
             result = c.execute(
                 sessions.delete().where(sessions.c.started_at < cutoff_date)
             )
-            
+
             return result.rowcount
     except Exception as e:
         print(f"Error during cleanup: {e}")
@@ -370,7 +379,7 @@ def cleanup_old_sessions(days_old: int = 30) -> int:
 # Migration function to update existing sessions
 def migrate_existing_sessions():
     """Migrates existing sessions to include state_data column.
-    
+
     This function should be run once to populate state_data for existing sessions.
     """
     try:
@@ -379,7 +388,7 @@ def migrate_existing_sessions():
             results = c.execute(
                 select(sessions).where(sessions.c.state_data.is_(None))
             ).fetchall()
-            
+
             for session in results:
                 # Create default state data
                 default_state = {
@@ -387,17 +396,20 @@ def migrate_existing_sessions():
                     "penalty": 0.0,
                     "transcript": [],
                     "last_bot": "",
-                    "started_at": session.started_at.isoformat() if session.started_at else datetime.now().isoformat(),
+                    "started_at": (
+                        session.started_at.isoformat()
+                        if session.started_at
+                        else datetime.now().isoformat()
+                    ),
                 }
-                
+
                 # Update session with default state
                 c.execute(
                     update(sessions)
                     .where(sessions.c.id == session.id)
                     .values(state_data=json.dumps(default_state))
                 )
-                
+
             print(f"Migrated {len(results)} sessions")
     except Exception as e:
         print(f"Migration error: {e}")
-

@@ -1,0 +1,121 @@
+{"text": "Could you please provide the logs related to this issue?", "label": "ask_for_logs"}
+{"text": "I need the HAR files to investigate further.", "label": "ask_for_logs"}
+{"text": "Can you send over the log files?", "label": "ask_for_logs"}
+{"text": "Please share the logs so I can check what went wrong.", "label": "ask_for_logs"}
+{"text": "Do you have the HAR data available?", "label": "ask_for_logs"}
+{"text": "Could you upload the logs for analysis?", "label": "ask_for_logs"}
+{"text": "I require the logs to proceed with troubleshooting.", "label": "ask_for_logs"}
+{"text": "Please provide the HAR export from your browser.", "label": "ask_for_logs"}
+{"text": "Can you send the relevant log files?", "label": "ask_for_logs"}
+{"text": "Would you mind sharing the HAR logs?", "label": "ask_for_logs"}
+{"text": "I need the logs to understand the problem better.", "label": "ask_for_logs"}
+{"text": "Could you get me the HAR files, please?", "label": "ask_for_logs"}
+{"text": "Please send the logs so I can look into the issue.", "label": "ask_for_logs"}
+{"text": "Can you provide the HAR capture?", "label": "ask_for_logs"}
+{"text": "I’d like to see the logs to diagnose this.", "label": "ask_for_logs"}
+{"text": "Could you share the HAR logs?", "label": "ask_for_logs"}
+{"text": "Please upload the log files for review.", "label": "ask_for_logs"}
+{"text": "I need the HAR data to continue.", "label": "ask_for_logs"}
+{"text": "Would you send the logs, please?", "label": "ask_for_logs"}
+{"text": "Could you provide the relevant logs?", "label": "ask_for_logs"}
+{"text": "Please share the HAR files with me.", "label": "ask_for_logs"}
+{"text": "Can you send the logs for further analysis?", "label": "ask_for_logs"}
+{"text": "I require the HAR export to move forward.", "label": "ask_for_logs"}
+{"text": "Please give me the log files.", "label": "ask_for_logs"}
+{"text": "Could you upload the HAR logs?", "label": "ask_for_logs"}
+{"text": "I’d appreciate the logs to investigate.", "label": "ask_for_logs"}
+{"text": "Can you provide the logs?", "label": "ask_for_logs"}
+{"text": "Please send the HAR data.", "label": "ask_for_logs"}
+{"text": "Could you share the logs?", "label": "ask_for_logs"}
+{"text": "I need the log files to help you.", "label": "ask_for_logs"}
+{"text": "What is your goal with this task?", "label": "ask_for_goal"}
+{"text": "Could you explain what you want to achieve?", "label": "ask_for_goal"}
+{"text": "Please tell me your objective.", "label": "ask_for_goal"}
+{"text": "What’s the goal you’re trying to reach?", "label": "ask_for_goal"}
+{"text": "Can you share the intended outcome?", "label": "ask_for_goal"}
+{"text": "What result are you aiming for?", "label": "ask_for_goal"}
+{"text": "Could you clarify your goal?", "label": "ask_for_goal"}
+{"text": "Please describe what you want to accomplish.", "label": "ask_for_goal"}
+{"text": "What’s the end goal here?", "label": "ask_for_goal"}
+{"text": "Can you tell me your purpose?", "label": "ask_for_goal"}
+{"text": "What are you trying to achieve?", "label": "ask_for_goal"}
+{"text": "Could you state your goal?", "label": "ask_for_goal"}
+{"text": "Please share your objective.", "label": "ask_for_goal"}
+{"text": "What’s your intended goal?", "label": "ask_for_goal"}
+{"text": "Can you explain the aim?", "label": "ask_for_goal"}
+{"text": "What is the target outcome?", "label": "ask_for_goal"}
+{"text": "Could you let me know your goal?", "label": "ask_for_goal"}
+{"text": "Please tell me the result you want.", "label": "ask_for_goal"}
+{"text": "What’s the main objective?", "label": "ask_for_goal"}
+{"text": "Can you describe your goal?", "label": "ask_for_goal"}
+{"text": "What goal are you working towards?", "label": "ask_for_goal"}
+{"text": "Could you share your aim?", "label": "ask_for_goal"}
+{"text": "Please explain what you want to do.", "label": "ask_for_goal"}
+{"text": "What outcome do you expect?", "label": "ask_for_goal"}
+{"text": "Can you tell me your goal?", "label": "ask_for_goal"}
+{"text": "What are you hoping to achieve?", "label": "ask_for_goal"}
+{"text": "Could you specify your goal?", "label": "ask_for_goal"}
+{"text": "Please state your objective.", "label": "ask_for_goal"}
+{"text": "What’s your desired result?", "label": "ask_for_goal"}
+{"text": "Can you share your target?", "label": "ask_for_goal"}
+{"text": "Could you provide the reproduction steps?", "label": "ask_for_repro"}
+{"text": "Please give me the steps to reproduce the issue.", "label": "ask_for_repro"}
+{"text": "How can I replicate the problem?", "label": "ask_for_repro"}
+{"text": "Can you describe how to reproduce this bug?", "label": "ask_for_repro"}
+{"text": "What are the reproduction steps?", "label": "ask_for_repro"}
+{"text": "Please share the exact steps to reproduce.", "label": "ask_for_repro"}
+{"text": "Could you tell me how to reproduce the issue?", "label": "ask_for_repro"}
+{"text": "I need the reproduction process.", "label": "ask_for_repro"}
+{"text": "Can you provide the steps to replicate?", "label": "ask_for_repro"}
+{"text": "How do I reproduce this problem?", "label": "ask_for_repro"}
+{"text": "Please describe the repro steps.", "label": "ask_for_repro"}
+{"text": "Could you share the reproduction instructions?", "label": "ask_for_repro"}
+{"text": "What steps do I need to follow to reproduce?", "label": "ask_for_repro"}
+{"text": "Can you explain how to reproduce the bug?", "label": "ask_for_repro"}
+{"text": "Please provide the reproduction steps.", "label": "ask_for_repro"}
+{"text": "How can I reproduce this issue?", "label": "ask_for_repro"}
+{"text": "Could you give me the repro steps?", "label": "ask_for_repro"}
+{"text": "Please tell me how to replicate the bug.", "label": "ask_for_repro"}
+{"text": "What’s the process to reproduce?", "label": "ask_for_repro"}
+{"text": "Can you detail the reproduction steps?", "label": "ask_for_repro"}
+{"text": "How do I replicate the issue?", "label": "ask_for_repro"}
+{"text": "Please share how to reproduce this.", "label": "ask_for_repro"}
+{"text": "Could you provide reproduction instructions?", "label": "ask_for_repro"}
+{"text": "What are the exact steps to reproduce?", "label": "ask_for_repro"}
+{"text": "Can you describe the process to reproduce?", "label": "ask_for_repro"}
+{"text": "Please give me the steps for replication.", "label": "ask_for_repro"}
+{"text": "How can I replicate the bug?", "label": "ask_for_repro"}
+{"text": "Could you explain the reproduction steps?", "label": "ask_for_repro"}
+{"text": "I need the exact reproduction procedure.", "label": "ask_for_repro"}
+{"text": "What steps do I follow to reproduce?", "label": "ask_for_repro"}
+{"text": "Can you share the reproduction method?", "label": "ask_for_repro"}
+{"text": "Please provide instructions to reproduce.", "label": "ask_for_repro"}
+{"text": "What context can you share about the issue?", "label": "ask_for_context"}
+{"text": "Could you give me more background information?", "label": "ask_for_context"}
+{"text": "Please provide additional context.", "label": "ask_for_context"}
+{"text": "Can you share the environment details?", "label": "ask_for_context"}
+{"text": "What’s the context around this problem?", "label": "ask_for_context"}
+{"text": "Could you explain the circumstances?", "label": "ask_for_context"}
+{"text": "Please tell me more about the situation.", "label": "ask_for_context"}
+{"text": "Can you provide the context for this issue?", "label": "ask_for_context"}
+{"text": "What environment are you running this in?", "label": "ask_for_context"}
+{"text": "Could you share relevant details about the setup?", "label": "ask_for_context"}
+{"text": "Please give me context to understand better.", "label": "ask_for_context"}
+{"text": "Can you describe the conditions when this happens?", "label": "ask_for_context"}
+{"text": "What’s the background for this issue?", "label": "ask_for_context"}
+{"text": "Could you provide more info about the environment?", "label": "ask_for_context"}
+{"text": "Please share any relevant context.", "label": "ask_for_context"}
+{"text": "Can you explain the scenario?", "label": "ask_for_context"}
+{"text": "What are the details surrounding this problem?", "label": "ask_for_context"}
+{"text": "Could you give me the context details?", "label": "ask_for_context"}
+{"text": "Please provide environment specifics.", "label": "ask_for_context"}
+{"text": "Can you share more about the conditions?", "label": "ask_for_context"}
+{"text": "What context can you add?", "label": "ask_for_context"}
+{"text": "Could you describe the setup?", "label": "ask_for_context"}
+{"text": "Please tell me about the environment.", "label": "ask_for_context"}
+{"text": "Can you provide background info?", "label": "ask_for_context"}
+{"text": "What’s the situation when this occurs?", "label": "ask_for_context"}
+{"text": "Could you share details about your environment?", "label": "ask_for_context"}
+{"text": "Please provide any additional context.", "label": "ask_for_context"}
+{"text": "Can you explain the background?", "label": "ask_for_context"}
+{"text": "What details can you share about the issue?", "label": "ask_for_context"}

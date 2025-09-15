@@ -1,0 +1,106 @@
+{"text": "Can you share the HAR file from DevTools?", "label": "ask_for_logs"}
+{"text": "Please upload the network logs for analysis.", "label": "ask_for_logs"}
+{"text": "Could you provide the HAR file to help diagnose?", "label": "ask_for_logs"}
+{"text": "Send me the network trace so I can check the errors.", "label": "ask_for_logs"}
+{"text": "I need the HAR export from your browser's DevTools.", "label": "ask_for_logs"}
+{"text": "Could you attach the logs showing the failed requests?", "label": "ask_for_logs"}
+{"text": "Please share the network capture that includes the error.", "label": "ask_for_logs"}
+{"text": "Can you provide the HAR file for further investigation?", "label": "ask_for_logs"}
+{"text": "I’d like to see the log file from your network activity.", "label": "ask_for_logs"}
+{"text": "Upload the network logs to assist with troubleshooting.", "label": "ask_for_logs"}
+{"text": "Please share the HAR file that records the network traffic.", "label": "ask_for_logs"}
+{"text": "Could you send the logs from your browser's developer tools?", "label": "ask_for_logs"}
+{"text": "I need the HAR file to understand the network errors better.", "label": "ask_for_logs"}
+{"text": "Can you export and share the network log from DevTools?", "label": "ask_for_logs"}
+{"text": "Please provide the HAR capture showing the failed requests.", "label": "ask_for_logs"}
+{"text": "Could you send the HAR file to analyze the network issues?", "label": "ask_for_logs"}
+{"text": "I require the network logs to proceed with debugging.", "label": "ask_for_logs"}
+{"text": "Please upload the HAR file that documents the errors.", "label": "ask_for_logs"}
+{"text": "Can you share the network trace to check for 502 errors?", "label": "ask_for_logs"}
+{"text": "Provide the HAR file so I can review the failed requests.", "label": "ask_for_logs"}
+{"text": "Could you send the detailed logs from your network capture?", "label": "ask_for_logs"}
+{"text": "Please export the HAR file and share it for troubleshooting.", "label": "ask_for_logs"}
+{"text": "I’d like to review the network logs to identify the problem.", "label": "ask_for_logs"}
+{"text": "Can you upload the HAR file that contains the network data?", "label": "ask_for_logs"}
+{"text": "Please provide the network logs from your browser session.", "label": "ask_for_logs"}
+{"text": "Could you share the HAR file to help us debug the issue?", "label": "ask_for_logs"}
+{"text": "I need the network capture file to analyze the errors.", "label": "ask_for_logs"}
+{"text": "Please send the HAR export from your DevTools session.", "label": "ask_for_logs"}
+{"text": "Can you provide the logs showing the network failures?", "label": "ask_for_logs"}
+{"text": "What is your goal with this integration?", "label": "ask_for_goal"}
+{"text": "What outcome are you expecting from this setup?", "label": "ask_for_goal"}
+{"text": "Could you clarify your main objective with this integration?", "label": "ask_for_goal"}
+{"text": "What result do you want to achieve with this integration?", "label": "ask_for_goal"}
+{"text": "Please describe the goal you have for this integration.", "label": "ask_for_goal"}
+{"text": "What is the desired outcome of this integration?", "label": "ask_for_goal"}
+{"text": "Can you tell me what you want to accomplish here?", "label": "ask_for_goal"}
+{"text": "What is the specific goal you aim for with this setup?", "label": "ask_for_goal"}
+{"text": "Could you explain what you hope to get from this integration?", "label": "ask_for_goal"}
+{"text": "What is your intended result from this integration?", "label": "ask_for_goal"}
+{"text": "Please share the main objective for this integration.", "label": "ask_for_goal"}
+{"text": "What outcome are you looking to achieve with this integration?", "label": "ask_for_goal"}
+{"text": "Can you outline the goals you have for this integration?", "label": "ask_for_goal"}
+{"text": "What do you want to accomplish with this integration?", "label": "ask_for_goal"}
+{"text": "Could you specify the desired results for this integration?", "label": "ask_for_goal"}
+{"text": "What is the purpose of this integration from your perspective?", "label": "ask_for_goal"}
+{"text": "Can you specify what you want to achieve here?", "label": "ask_for_goal"}
+{"text": "What is the end goal for this integration?", "label": "ask_for_goal"}
+{"text": "Please describe what success looks like for this integration.", "label": "ask_for_goal"}
+{"text": "What are you hoping to get out of this integration?", "label": "ask_for_goal"}
+{"text": "Could you clarify the results you want from this integration?", "label": "ask_for_goal"}
+{"text": "What is your main aim with this integration?", "label": "ask_for_goal"}
+{"text": "Can you tell me the expected outcome from this setup?", "label": "ask_for_goal"}
+{"text": "What is the goal you want to achieve with this integration?", "label": "ask_for_goal"}
+{"text": "Please let me know the objective of this integration.", "label": "ask_for_goal"}
+{"text": "What result do you expect from this integration?", "label": "ask_for_goal"}
+{"text": "Please list the steps to reproduce the error.", "label": "ask_for_repro"}
+{"text": "Can you provide detailed reproduction steps?", "label": "ask_for_repro"}
+{"text": "What are the exact steps to recreate the issue?", "label": "ask_for_repro"}
+{"text": "Please describe how to reproduce the problem.", "label": "ask_for_repro"}
+{"text": "Could you outline the steps that lead to the error?", "label": "ask_for_repro"}
+{"text": "Can you share the sequence of actions to reproduce the bug?", "label": "ask_for_repro"}
+{"text": "What is the process to reproduce the issue?", "label": "ask_for_repro"}
+{"text": "Please provide a step-by-step guide to replicate the problem.", "label": "ask_for_repro"}
+{"text": "Can you detail the reproduction steps for the error?", "label": "ask_for_repro"}
+{"text": "What steps do you take that cause the issue to appear?", "label": "ask_for_repro"}
+{"text": "Could you provide a detailed sequence of steps to reproduce the error?", "label": "ask_for_repro"}
+{"text": "Please explain how to replicate the issue.", "label": "ask_for_repro"}
+{"text": "Can you list the exact steps to reproduce the problem?", "label": "ask_for_repro"}
+{"text": "What actions lead to the error occurring?", "label": "ask_for_repro"}
+{"text": "Please share the reproduction steps for the bug.", "label": "ask_for_repro"}
+{"text": "Could you describe how to reproduce the issue in detail?", "label": "ask_for_repro"}
+{"text": "What is the reproduction procedure for this problem?", "label": "ask_for_repro"}
+{"text": "Can you outline the steps necessary to recreate the issue?", "label": "ask_for_repro"}
+{"text": "Please provide instructions on how to reproduce the error.", "label": "ask_for_repro"}
+{"text": "What are the reproducible steps to trigger the bug?", "label": "ask_for_repro"}
+{"text": "Can you explain the process to reproduce the issue?", "label": "ask_for_repro"}
+{"text": "Please provide the sequence of steps that cause the problem.", "label": "ask_for_repro"}
+{"text": "What steps should I follow to reproduce the error?", "label": "ask_for_repro"}
+{"text": "Can you describe the reproduction steps clearly?", "label": "ask_for_repro"}
+{"text": "Which iPad model and iOS version are you using?", "label": "ask_for_context"}
+{"text": "Can you specify your device model and OS version?", "label": "ask_for_context"}
+{"text": "Please provide the iPad model and iOS version involved.", "label": "ask_for_context"}
+{"text": "What device and operating system are you using?", "label": "ask_for_context"}
+{"text": "Could you tell me your iPad model and iOS version?", "label": "ask_for_context"}
+{"text": "Which iPad and iOS versions are you currently on?", "label": "ask_for_context"}
+{"text": "Please share the device model and OS version.", "label": "ask_for_context"}
+{"text": "What specific iPad model and iOS version is involved?", "label": "ask_for_context"}
+{"text": "Can you provide details about your iPad model and OS?", "label": "ask_for_context"}
+{"text": "Which device and iOS version are you using?", "label": "ask_for_context"}
+{"text": "Could you specify the iPad model and iOS version?", "label": "ask_for_context"}
+{"text": "What’s your iPad model and the iOS version installed?", "label": "ask_for_context"}
+{"text": "Please tell me your device model and iOS version.", "label": "ask_for_context"}
+{"text": "Which iPad model and iOS version do you have?", "label": "ask_for_context"}
+{"text": "Can you share the model of your iPad and its iOS version?", "label": "ask_for_context"}
+{"text": "What device model and OS version is in use?", "label": "ask_for_context"}
+{"text": "Please specify the iPad model and the operating system version.", "label": "ask_for_context"}
+{"text": "Which version of iOS and iPad model are you using?", "label": "ask_for_context"}
+{"text": "Can you tell me the iPad model and iOS version involved?", "label": "ask_for_context"}
+{"text": "What is the iPad model and OS version on your device?", "label": "ask_for_context"}
+{"text": "Please provide the hardware model and OS version.", "label": "ask_for_context"}
+{"text": "What iPad model and iOS version are you currently running?", "label": "ask_for_context"}
+{"text": "Could you let me know your iPad model and iOS version?", "label": "ask_for_context"}
+{"text": "Which specific iPad and iOS version are you using?", "label": "ask_for_context"}
+{"text": "Please share your device model and OS version.", "label": "ask_for_context"}
+{"text": "What’s the iPad model and iOS version on your device?", "label": "ask_for_context"}
+{"text": "Can you specify your device and OS version?", "label": "ask_for_context"}

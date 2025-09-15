@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field, validator
 
 try:
     import structlog  # type: ignore
+
     _STRUCTLOG_AVAILABLE = True
 except ImportError:  # Fallback if structlog isn't installed
     _STRUCTLOG_AVAILABLE = False
@@ -23,15 +24,16 @@ from intents import detect
 from providers import make_provider
 from scoring import compute_score
 from storage import (
-    get_session, 
-    end_session, 
-    log_turn, 
-    new_session, 
-    update_session,
     add_milestone,
+    end_session,
+    get_session,
     get_session_milestones,
-    get_session_transcript
+    get_session_transcript,
+    log_turn,
+    new_session,
+    update_session,
 )
+
 # Load environment and scenario configuration
 load_dotenv()
 
@@ -74,12 +76,10 @@ else:
                     logger,
                     name if name in {"debug", "info", "warning", "error"} else "info",
                 )(message)
+
             return _log
 
     struct_logger = _StructLoggerFallback()
-
-
-
 
 
 @asynccontextmanager
@@ -118,6 +118,7 @@ async def lifespan(app: FastAPI):
         struct_logger.error("application.startup.failed", error=str(e), exc_info=True)
         logger.error(f"Failed to start application: {str(e)}")
         import sys
+
         sys.exit(1)
     except Exception as e:
         struct_logger.error(
@@ -125,6 +126,7 @@ async def lifespan(app: FastAPI):
         )
         logger.error(f"Unknown error during startup: {str(e)}")
         import sys
+
         sys.exit(1)
 
     yield
@@ -269,7 +271,7 @@ async def reply_node_fn(state: State) -> State:
     # Ensure we're working with proper State object
     if not isinstance(state, State):
         state = State(state)
-    
+
     session_id = state.get("session_id", "unknown")
     start_time = time.time()
 
@@ -300,10 +302,10 @@ async def reply_node_fn(state: State) -> State:
                 "intent.detection.failed",
                 session_id=session_id,
                 error=str(intent_error),
-                exc_info=True
+                exc_info=True,
             )
             intents = {}  # Fallback to empty intents
-            
+
         intent_duration = time.time() - intent_start
 
         struct_logger.info(
@@ -366,20 +368,17 @@ async def reply_node_fn(state: State) -> State:
                 struct_logger.error(
                     "challenge_injection.config_error",
                     session_id=session_id,
-                    error=str(config_error)
+                    error=str(config_error),
                 )
 
         # Generate LLM response with better error handling
         llm_start = time.time()
         try:
-            provider = PROVIDER_CACHE.get("default")
-            if not provider:
-                # Fallback provider creation
-                provider = make_provider(
-                    system_prompt=SCEN["determinism"]["style"],
-                    temperature=float(SCEN["determinism"]["temperature"]),
-                    top_p=float(SCEN["determinism"]["top_p"]),
-                )
+            provider = PROVIDER_CACHE.get("default") or make_provider(
+                system_prompt=SCEN["determinism"]["style"],
+                temperature=float(SCEN["determinism"]["temperature"]),
+                top_p=float(SCEN["determinism"]["top_p"]),
+            )
 
             content = (
                 f"User said: {user_text}\n"
@@ -512,7 +511,7 @@ async def start(req: StartReq):
         sid = new_session(req.candidate_label, SCEN["id"])
 
         seed = SCEN["seed_message"]
-        
+
         # Update session with initial seed message
         initial_state = {
             "milestones": [],
@@ -521,7 +520,7 @@ async def start(req: StartReq):
             "last_bot": seed,
             "started_at": datetime.now().isoformat(),
         }
-        
+
         update_success = update_session(sid, initial_state)
         if not update_success:
             struct_logger.warning("session.start.update_failed", session_id=sid)
@@ -570,20 +569,22 @@ async def reply(msg: Msg):
             raise HTTPException(status_code=404, detail="Session not found")
 
         # Create state with existing session data
-        state = State({
-            "session_id": msg.session_id,
-            "transcript": existing_session.get("transcript", []),
-            "milestones": existing_session.get("milestones", []),
-            "started_at": existing_session.get("started_at", time.time()),
-            "penalty": existing_session.get("penalty", 0.0),
-            "last_user": msg.text,
-        })
+        state = State(
+            {
+                "session_id": msg.session_id,
+                "transcript": existing_session.get("transcript", []),
+                "milestones": existing_session.get("milestones", []),
+                "started_at": existing_session.get("started_at", time.time()),
+                "penalty": existing_session.get("penalty", 0.0),
+                "last_user": msg.text,
+            }
+        )
 
         struct_logger.debug(
             "session.loaded",
             session_id=msg.session_id,
             existing_milestones=len(state.get("milestones", [])),
-            existing_transcript_length=len(state.get("transcript", []))
+            existing_transcript_length=len(state.get("transcript", [])),
         )
 
         # Log user turn
@@ -593,7 +594,7 @@ async def reply(msg: Msg):
         graph_start = time.time()
         out: State = await graph.ainvoke(state)
         graph_duration = time.time() - graph_start
-        
+
         if not isinstance(out, dict):
             struct_logger.error(
                 "graph.invalid_output",
@@ -619,7 +620,7 @@ async def reply(msg: Msg):
                 started_at_str = datetime.fromtimestamp(started_at_value).isoformat()
             else:
                 started_at_str = str(started_at_value)
-            
+
             updated_session_data = {
                 "transcript": out.get("transcript", []),
                 "milestones": out.get("milestones", []),
@@ -627,31 +628,33 @@ async def reply(msg: Msg):
                 "started_at": started_at_str,
                 "last_bot": out.get("last_bot", ""),
             }
-            
+
             update_success = update_session(msg.session_id, updated_session_data)
             if not update_success:
                 struct_logger.warning(
                     "session.update_failed", session_id=msg.session_id
                 )
-            
+
             struct_logger.debug(
                 "session.updated",
                 session_id=msg.session_id,
                 milestones_count=len(out.get("milestones", [])),
-                transcript_length=len(out.get("transcript", []))
+                transcript_length=len(out.get("transcript", [])),
             )
-            
+
             # Also save individual milestones for tracking
-            new_milestones = set(out.get("milestones", [])) - set(existing_session.get("milestones", []))
+            new_milestones = set(out.get("milestones", [])) - set(
+                existing_session.get("milestones", [])
+            )
             for milestone in new_milestones:
                 add_milestone(msg.session_id, milestone, len(out.get("transcript", [])))
-                
+
         except Exception as storage_error:
             struct_logger.error(
                 "session.update_failed",
                 session_id=msg.session_id,
                 error=str(storage_error),
-                exc_info=True
+                exc_info=True,
             )
             # Continue processing but log the issue
 
@@ -711,16 +714,16 @@ async def finish(session_id: str):
         if session is None:
             struct_logger.error("session.not_found", session_id=session_id)
             raise HTTPException(status_code=404, detail="Session not found")
-        
+
         started_at = session.get("started_at")
         if not started_at:
             struct_logger.error("session.missing_start_time", session_id=session_id)
             raise HTTPException(status_code=400, detail="Session start time not found")
-        
+
         # Handle different timestamp formats
         if isinstance(started_at, str):
             try:
-                started_at = datetime.fromisoformat(started_at.replace('Z', '+00:00'))
+                started_at = datetime.fromisoformat(started_at.replace("Z", "+00:00"))
             except ValueError:
                 # Fallback for other string formats
                 started_at = datetime.now(timezone.utc)
@@ -731,7 +734,7 @@ async def finish(session_id: str):
                 started_at = started_at.replace(tzinfo=timezone.utc)
         else:
             started_at = datetime.now(timezone.utc)
-        
+
         now = datetime.now(timezone.utc)
         elapsed = (now - started_at).total_seconds()
         end_session(session_id, elapsed)
@@ -818,15 +821,15 @@ async def debug_session(session_id: str):
     """Get detailed session information for debugging."""
     if not os.getenv("DEBUG", "false").lower() == "true":
         raise HTTPException(status_code=404, detail="Not found")
-    
+
     try:
         session = get_session(session_id)
         if not session:
             raise HTTPException(status_code=404, detail="Session not found")
-        
+
         milestones = get_session_milestones(session_id)
         transcript = get_session_transcript(session_id)
-        
+
         return {
             "session": session,
             "milestones": milestones,

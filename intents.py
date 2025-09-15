@@ -1,14 +1,16 @@
 import re
+import time
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Dict, List, Optional, Union
-import time
 
 import torch
 from loguru import logger
 from sentence_transformers import SentenceTransformer, util
 
-_CLASSIFER_INSTANCE = None
+_CLASSIFIER_INSTANCE = None
+
+
 @dataclass
 class ClassificationResult:
     """Stores the results of text classification for intent detection.
@@ -27,6 +29,7 @@ class ClassificationResult:
     semantic_matches: Dict[str, float]
     processing_time_ms: float
 
+
 class TextEmbedder:
     _MODEL_REGISTRY = {}
 
@@ -44,7 +47,8 @@ class TextEmbedder:
             return text
         model = TextEmbedder._MODEL_REGISTRY.get(self.model_id)
         return model.encode([text], convert_to_tensor=True, normalize_embeddings=True)
-    
+
+
 class TextClassifier:
     """Classifies user text into intent categories using regex and semantic similarity.
 
@@ -53,119 +57,150 @@ class TextClassifier:
     Attributes:
         similarity_threshold (float): The threshold for semantic similarity matching.
     """
+
     # Rule definitions
     _rules = {
-            "ask_for_diagnostic_data": [
-                r"\bhar\b",
-                r"network\s+log",
-                r"devtools?",
-                r"fiddler",
-                r"wireshark",
-                r"postman",
-                r"curl",
-                r"http\s+trace",
-                r"trace\s+log",
-                r"capture\s+log",
-                r"screen\s+recording",
-                r"screencast",
-                r"video\s+recording",
-                r"video\s+clip",
-                r"screenshot",
-                r"screen\s+shot",
-                r"network\s+tab",
-                r"traceback",
-                r"preserve\s+log",
-                r"export\s+.*har",
-                r"console\s+log", 
-            ],
-            "ask_for_goal": [
-                r"\bgoal\b",
-                r"what.*trying.*(do|achieve)",
-                r"outcome",
-                r"objective",  
-                r"purpose",
-                r"aim",
-                r"intend(ed)?\s+result",
-                r"desired\s+state",
-                r"expect(ed)?\s+result",
-                r"want(ed)?\s+to\s+(do|achieve)",
-                r"looking\s+to\s+(do|achieve)",
-                r"need(ed)?\s+to\s+(do|achieve)",
-                r"wish(ed)?\s+to\s+(do|achieve)",
-                r"trying\s+to\s+(do|achieve)",
-            ],
-            "ask_for_repro": [
-                r"repro(duce|duction)?",
-                r"\bsteps\b",
-                r"how.*reproduce",
-                r"recreate.*issue",
-                r"replicate.*issue",
-                r"cannot\s+reproduce",
-                r"unable\s+to\s+reproduce",
-                r"works?\s+for\s+me",
-                r"did\s+not\s+see",
-            ],
-            "ask_for_context": [
-                r"device",
-                r"ipad",
-                r"ios",
-                r"version",
-                r"browser",
-                r"safari",
-                r"chrome",
-                r"firefox",
-                r"LTS\sversion",
-                r"\bLTS\b",
-                r"edge",
-                r"android",
-                r"app",
-                r"When\sdid\s(these|this)\s(start|begin)",
-                r"did\s(this|these)\s(start|begin)",
-                r"did\s(this|these)\s(change|stop)",
-                r"os",
-                r"windows",
-                r"mac(os)?",
-                r"linux",
-                r"mobile",
-                r"tablet",
-                r"desktop",
-                r"implementation\s+detail",
-                r"webview",
-                r"file\s?(type|format)",
-                r"operating\s+system",  
-            ],
-            "propose_fix": [
-                r"try",
-                r"suggest",
-                r"workaround",
-                r"\bfix\b",
-                r"solution",
-                r"change",
-                r"switch",
-                r"configure",
-                r"encode",
-                r"recommend",
-                r"alternative",
-                r"adjust",
-                r"patch",
-            ],
-        }
+        
+        "confirm_learnosity_implementation_details": [
+            r"learnosity",
+            r"lts\sversion",
+            r"author\s?\s+api",
+            r"items\s+api",
+            r"assessments?\s+api",
+            r"questions?\s+api",
+            r"reports?\s+api",
+            r"data\s+api",
+            r"learnosity\s+api",
+            r"disractor\sratonale",
+            r"disractor\s+rationale",
+            r"consumer\s+key",
+            r"consumer\s+secret",
+            r"security\s+signature",
+            r"initialization\s+object",
+            r"request\s+object",
+            r"activity\s+template",
+            r"items?\s+configuration",
+            
+        ],
+            
+        "ask_for_diagnostic_data": [
+            r"\bhar\b",
+            r"network\s+log",
+            r"devtools?",
+            r"fiddler",
+            r"wireshark",
+            r"postman",
+            r"curl",
+            r"http\s+trace",
+            r"trace\s+log",
+            r"capture\s+log",
+            r"screen\s+recording",
+            r"screencast",
+            r"video\s+recording",
+            r"video\s+clip",
+            r"screenshot",
+            r"screen\s+shot",
+            r"network\s+tab",
+            r"traceback",
+            r"preserve\s+log",
+            r"export\s+.*har",
+            r"console\s+log",
+        ],
+        "ask_for_goal": [
+            r"\bgoal\b",
+            r"what.*trying.*(do|achieve)",
+            r"outcome",
+            r"objective",
+            r"purpose",
+            r"aim",
+            r"intend(ed)?\s+result",
+            r"desired\s+state",
+            r"expect(ed)?\s+result",
+            r"trying\s+to\s+(do|achieve|fix|implement)",
+            r"want(ed)?\s+to\s+(do|achieve)",
+            r"looking\s+to\s+(do|achieve)",
+            r"need(ed)?\s+to\s+(do|achieve)",
+            r"wish(ed)?\s+to\s+(do|achieve)",
+            r"trying\s+to\s+(do|achieve)",
+        ],
+        "ask_for_repro": [
+            r"repro(duce|duction)?",
+            r"\bsteps\b",
+            r"how.*reproduce",
+            r"recreate.*issue",
+            r"replicate.*issue",
+            r"cannot\s+reproduce",
+            r"unable\s+to\s+reproduce",
+            r"works?\s+for\s+me",
+            r"did\s+not\s+see",
+        ],
+        "ask_for_context": [
+            r"device",
+            r"ipad",
+            r"ios",
+            r"version",
+            r"browser",
+            r"safari",
+            r"chrome",
+            r"firefox",
+            r"LTS\sversion",
+            r"\bLTS\b",
+            r"edge",
+            r"android",
+            r"app",
+            r"When\sdid\s(these|this)\s(start|begin)",
+            r"did\s(this|these)\s(start|begin)",
+            r"did\s(this|these)\s(change|stop)",
+            r"os",
+            r"windows",
+            r"mac(os)?",
+            r"linux",
+            r"mobile",
+            r"tablet",
+            r"desktop",
+            r"implementation\s+detail",
+            r"webview",
+            r"file\s?(type|format)",
+            r"operating\s+system",
+        ],
+        "propose_fix": [
+            r"try",
+            r"suggest",
+            r"workaround",
+            r"\bfix\b",
+            r"solution",
+            r"change",
+            r"switch",
+            r"configure",
+            r"encode",
+            r"recommend",
+            r"alternative",
+            r"adjust",
+            r"patch",
+        ],
+    }
     _semantic_prompts = {
-            "ask_for_diagnostic_data": "please share the HAR or network logs from devtools",
-            "ask_for_goal": "what are you trying to achieve overall",
-            "ask_for_repro": "please provide steps to reproduce the issue",
-            "ask_for_context": "ask device os browser app webview and file-type details",
-            "propose_fix": "propose a likely resolution or workaround",
-        }
+        "ask_for_diagnostic_data": "please share the HAR or network logs from devtools",
+        "ask_for_goal": "what are you trying to achieve overall",
+        "ask_for_repro": "please provide steps to reproduce the issue",
+        "ask_for_context": "ask device os browser app webview and file-type details",
+        "propose_fix": "propose a likely resolution or workaround",
+    }
+
     def __init__(self, similarity_threshold: float = 0.62):
         self._model: Optional[SentenceTransformer] = None
-        self.embedder:TextEmbedder = TextEmbedder(self.model)
+        self.embedder: TextEmbedder = TextEmbedder(self.model)
         self.similarity_threshold: float = similarity_threshold
         self._compiled_patterns: Dict[str, List[re.Pattern]] = self._compile_patterns()
-        self._semantic_embeddings:Optional[List[torch.Tensor]] = None
-        
+        self._semantic_embeddings: Optional[List[torch.Tensor]] = None
 
-        logger.info(f"TextClassifier initialized with {len(type(self)._rules)} categories")
+        assert (
+            0.0 < self.similarity_threshold < 1.0
+        ), "similarity_threshold must be in (0.0, 1.0)"
+        assert len(type(self)._rules) > 0, "No rules defined for classification"
+        logger.info(
+            f"TextClassifier initialized with {len(type(self)._rules)} categories"
+        )
 
     def _compile_patterns(self) -> Dict[str, List[re.Pattern]]:
         """Compiles regex patterns for each intent category.
@@ -176,15 +211,16 @@ class TextClassifier:
             Dict[str, List[re.Pattern]]: Compiled regex patterns for each category.
         """
         return {
-           category: [re.compile(pattern, re.IGNORECASE) for pattern in patterns]
-           for category, patterns in type(self)._rules.items()
-       }
+            category: [re.compile(pattern, re.IGNORECASE) for pattern in patterns]
+            for category, patterns in type(self)._rules.items()
+        }
+
     @property
     def model(self) -> SentenceTransformer:
         """Loads and returns the sentence transformer model.
 
         This property initializes the model if it is not already loaded and precomputes semantic prompt embeddings.
-        
+
         Returns:
             The loaded SentenceTransformer model.
         """
@@ -231,7 +267,6 @@ class TextClassifier:
     def _get_text_embedding(self, text: str) -> torch.Tensor:
         return self.embedder.get_text_embedding(text)
 
-
     def _apply_regex_rules(
         self, text: str
     ) -> tuple[Dict[str, bool], Dict[str, List[str]]]:
@@ -277,7 +312,9 @@ class TextClassifier:
         text_embedding = self._get_text_embedding(text)
 
         # Compute cosine similarities -> [1, N] -> squeeze to [N]
-        similarities = util.cos_sim(text_embedding, self._semantic_embeddings).squeeze(0)
+        similarities = util.cos_sim(text_embedding, self._semantic_embeddings).squeeze(
+            0
+        )
 
         semantic_found = 0
         for i, category in enumerate(type(self)._semantic_prompts.keys()):
@@ -347,12 +384,14 @@ class TextClassifier:
             f"Classification complete: {total_matches}/{len(type(self)._rules)} categories matched ({processing_time:.1f}ms)"
         )
 
-        return ClassificationResult(
+        results = ClassificationResult(
             categories=regex_hits,
             matched_patterns=matched_patterns,
             semantic_matches=semantic_matches,
             processing_time_ms=processing_time,
         )
+        logger.debug(f"Classification results: {results}")
+        return results
 
     def batch_classify(self, texts: List[str]) -> List[ClassificationResult]:
         """
@@ -368,29 +407,54 @@ class TextClassifier:
         return [self.classify(text) for text in texts]
 
     def get_stats(self) -> Dict:
-        """Get classifier statistics and configuration."""
+        """Returns statistics and configuration details about the classifier.
+
+        This method provides information about the classifier's categories, pattern count, similarity threshold, model status, and cache usage.
+
+        Returns:
+            Dict: A dictionary containing classifier statistics and configuration.
+        """
         return {
             "categories": list(type(self)._rules.keys()),
-            "total_patterns": sum(len(patterns) for patterns in type(self)._rules.values()),
+            "total_patterns": sum(
+                len(patterns) for patterns in type(self)._rules.values()
+            ),
             "similarity_threshold": self.similarity_threshold,
             "model_loaded": self._model is not None,
             "cache_size": (
-                self._cached_text_embedding.cache_info() if hasattr(self, "_cached_text_embedding") else None
+                self._cached_text_embedding.cache_info()
+                if hasattr(self, "_cached_text_embedding")
+                else None
             ),
         }
 
 
-def detect(text: str) -> ClassificationResult:
-    """Backward compatible function interface."""
+def detect(input_text: str) -> ClassificationResult:
+    """Detects intent categories for a given input text using a singleton classifier instance.
+
+        This function classifies the input text and returns the detected intent categories.
+
+        Args:
+            input_text: The text to classify.
+    ww
+        Returns:
+            ClassificationResult containing the detected intent categories.
+    """
     if _CLASSIFER_INSTANCE is None:
         _CLASSIFER_INSTANCE = TextClassifier()
-    detected_intentions = _CLASSIFER_INSTANCE.classify(text)
+    intentions = _CLASSIFER_INSTANCE.classify(input_text)
+    return intentions.categories
 
 
 # Example usage
 if __name__ == "__main__":
     classifier = TextClassifier()
 
+    batch_test = (
+        input("Would you like to test batch classification texts? (y/n): ")
+        .strip()
+        .lower()
+    )
     # Test cases
     test_texts = [
         "Can you please share the HAR file?",
@@ -407,20 +471,22 @@ if __name__ == "__main__":
         "I suggest you try updating your browser",
         "It's broken",
     ]
-    results = classifier.batch_classify(test_texts)
-    for text, result in zip(test_texts, results):
-        matches = [k for k, v in result.categories.items() if v]
-        print(f"Text: {text}")
-        print(f"Matches: {matches}")
-        print(f"Time: {result.processing_time_ms:.1f}ms")
-        print("-" * 50)
-    # for text in test_texts:
-    #     result = classifier.classify(text)
-    #     matches = [k for k, v in result.categories.items() if v]
-    #     print(f"Text: {text}")
-    #     print(f"Matches: {matches}")
-    #     print(f"Time: {result.processing_time_ms:.1f}ms")
-    #     print("-" * 50)
+    if batch_test == "y":
+        results = classifier.batch_classify(test_texts)
+        for text, result in zip(test_texts, results):
+            matches = [k for k, v in result.categories.items() if v]
+            print(f"Text: {text}")
+            print(f"Matches: {matches}")
+            print(f"Time: {result.processing_time_ms:.1f}ms")
+            print("-" * 50)
+    else:
+        for text in test_texts:
+            result = classifier.classify(text)
+            matches = [k for k, v in result.categories.items() if v]
+            print(f"Text: {text}")
+            print(f"Matches: {matches}")
+            print(f"Time: {result.processing_time_ms:.1f}ms")
+            print("-" * 50)
 
     print("\nClassifier stats:")
     print(classifier.get_stats())

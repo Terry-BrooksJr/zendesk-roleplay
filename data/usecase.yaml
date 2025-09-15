@@ -1,0 +1,48 @@
+# usecase.yaml
+use_case: "Intent Detection for Support Engineering"
+description: >
+  Classify user messages into one of several support intents  (ask_for_logs, ask_for_goal, ask_for_repro, ask_for_context).  Used for automated triage and response scaffolding to.
+
+task: "text-classification"
+
+labels:
+  - ask_for_logs
+  - ask_for_goal
+  - ask_for_repro
+  - ask_for_context
+
+datasets:
+  train: "data/train.csv"
+  validation: "data/val.csv"
+  test: "data/test.csv"
+
+metrics:
+  - name: accuracy
+    threshold: 0.85
+  - name: f1
+    average: macro
+    threshold: 0.80
+  - name: latency_p95
+    threshold: 0.150 # in seconds (150ms)
+
+candidates:
+  - model: "facebook/bart-large-mnli"
+    type: "zero-shot-classification"
+  - model: "distilbert-base-uncased-finetuned-sst-2-english"
+    type: "text-classification"
+  - model: "./models/intent-detector-v1" # local fine-tuned checkpoint
+    type: "text-classification"
+
+constraints:
+  max_input_length: 512
+  batch_size: 16
+  device: "auto" # auto, cpu, cuda, mps
+
+evaluation:
+  split: "validation"
+  text_column: "text"
+  label_column: "label"
+
+report:
+  format: [ "json", "markdown" ]
+  output_dir: "reports/"
