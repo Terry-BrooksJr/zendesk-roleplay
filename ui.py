@@ -4,7 +4,36 @@ import gradio as gr
 import requests
 from loguru import logger
 from gradio_modal import Modal
+import tempfile
 
+def make_download_file(session_id: str, fmt: str):
+    if not session_id:
+        return None
+    url = f"{BASE}/transcript?session_id={session_id}&fmt={fmt}"
+    r = requests.get(url, timeout=30)
+    r.raise_for_status()
+    suffix = ".jsonl" if fmt == "jsonl" else f".{fmt}"
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+    tmp.write(r.content)
+    tmp.flush()
+    tmp.close()
+    return tmp.name
+
+with gr.Row():
+    fmt_dd = gr.Dropdown(
+        choices=["jsonl", "json", "txt"],
+        value="jsonl",
+        label="Export format",
+    )
+    dl_btn = gr.DownloadButton(
+        label="⬇️ Download Transcript",
+        value=None,
+    )
+
+def on_download(fmt):
+    return make_download_file(session_state.value, fmt)
+
+dl_btn.click(on_download, inputs=fmt_dd, outputs=dl_btn)
 
 # --- Helper to resolve BASE backend URL ---
 def resolve_base():
@@ -77,8 +106,7 @@ def chat_fn(user_msg, history, session_id):  # sourcery skip: low-code-quality
     Returns:
         dict: A dictionary containing the assistant's reply and any attachments.
     """
-    # Gradio ChatInterface(type="messages") passes the latest user message as a dict
-    # like {"role": "user", "content": "..."}. Support both dict and plain str.
+
     if isinstance(user_msg, dict):
         text = user_msg.get("content", "")
     else:
@@ -114,8 +142,6 @@ def chat_fn(user_msg, history, session_id):  # sourcery skip: low-code-quality
                 line = raw_line
                 if line.startswith("data:"):
                     line = line[5:].lstrip()
-                # We expect the backend to send incremental tokens as plain text lines,
-                # or JSON with a {"delta": "..."} or {"message": "..."}
                 try:
                     import json as _json
 

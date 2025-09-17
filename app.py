@@ -2,7 +2,7 @@ import os
 import time
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Literal, TypedDict
 
 import yaml
 from dotenv import load_dotenv
@@ -33,10 +33,71 @@ from storage import (
     new_session,
     update_session,
 )
+import os, json, time
+from fastapi.responses import JSONResponse, PlainTextResponse, Response
 
+SESS_DIR = os.path.abspath("./sessions")
+os.makedirs(SESS_DIR, exist_ok=True)
+
+_SESS_CACHE = {}
+
+def _session_path(session_id: str) -> str:
+    return os.path.join(SESS_DIR, f"{session_id}.jsonl")
+
+def load_session(session_id: str) -> dict:
+    if session_id in _SESS_CACHE:
+        return _SESS_CACHE[session_id]
+    path = _session_path(session_id)
+    if not os.path.exists(path):
+        _SESS_CACHE[session_id] = {
+            "session_id": session_id,
+            "started_at": time.time(),
+            "transcript": [],
+            "milestones": {},
+            "phase": "intro",
+        }
+        return _SESS_CACHE[session_id]
+    with open(path, "r", encoding="utf-8") as fh:
+        lines = [json.loads(l) for l in fh if l.strip()]
+    latest = lines[-1] if lines else {}
+    _SESS_CACHE[session_id] = latest
+    return latest
+
+def save_session(session_id: str, state: dict) -> None:
+    _SESS_CACHE[session_id] = state
+    path = _session_path(session_id)
+    with open(path, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(state, ensure_ascii=False) + "\n")
+
+@app.get("/transcript")
+def export_transcript(session_id: str, fmt: str = "jsonl"):
+    state = load_session(session_id)
+    transcript = state.get("transcript", [])
+    if fmt == "json":
+        return JSONResponse({"session_id": session_id, "transcript": transcript})
+    if fmt == "txt":
+        lines = [f"{t['role'].upper()}: {t['text']}" for t in transcript]
+        return PlainTextResponse("\n\n".join(lines))
+    buf = [json.dumps(t, ensure_ascii=False) for t in transcript]
+    return Response("\n".join(buf), media_type="application/x-ndjson")
+def _provider_meta():
+    return {
+        "provider": os.getenv("MODEL_PROVIDER", "openai"),
+        "model": os.getenv("MODEL_NAME", ""),
+        "timeout": float(os.getenv("LLM_REQUEST_TIMEOUT", "30")),
+        "max_output_tokens": int(os.getenv("MAX_OUTPUT_TOKENS", "512")),
+    }
 # Load environment and scenario configuration
 load_dotenv()
 
+Role = Literal["user", "assistant"]  # user=agent (you), assistant=customer-bot
+
+class Turn(TypedDict):
+    role: Role
+    text: str
+    meta: dict
+    
+    
 # Cache scenario configuration at startup
 SCEN: Optional[Dict[str, Any]] = None
 PROVIDER_CACHE: Dict[str, Any] = {}
@@ -291,7 +352,7 @@ async def reply_node_fn(state: State) -> State:
             fallback_message = "I'm ready when you are—what's the customer's message?"
             state["last_bot"] = fallback_message
             _append_transcript(state, "assistant", fallback_message)
-            return state
+            return dict(state)
 
         # Intent detection with timeout and error handling
         intent_start = time.time()
@@ -428,7 +489,7 @@ async def reply_node_fn(state: State) -> State:
             response_length=len(state["last_bot"]),
         )
 
-        return state
+        return dict(state)
 
     except Exception as e:
         struct_logger.error(
@@ -446,6 +507,7 @@ async def reply_node_fn(state: State) -> State:
 g = StateGraph(State)
 g.add_node("reply_node", reply_node_fn)
 g.set_entry_point("reply_node")
+g.set_finish_point("reply_node")  
 graph = g.compile()
 
 
@@ -535,6 +597,17 @@ async def start(req: StartReq):
             seed_message_length=len(seed),
         )
 
+        # Persist a full snapshot to JSONL for audit/export
+        save_session(sid, {
+            "session_id": sid,
+            "started_at": initial_state["started_at"],
+            "transcript": initial_state["transcript"],
+            "milestones": initial_state["milestones"],
+            "penalty": initial_state["penalty"],
+            "phase": "intro",
+            "last_bot": seed,
+        })
+
         return {"session_id": sid, "message": seed, "artifacts": []}
 
     except Exception as e:
@@ -592,16 +665,33 @@ async def reply(msg: Msg):
 
         # Process through graph
         graph_start = time.time()
+        if not msg.text.strip():
+            return {
+                "message": "I'm ready when you are—what's the customer's message?",
+                "attachments": [],
+                "milestones": existing_session.get("milestones", []),
+            }
+        state = State({
+            "session_id": msg.session_id,
+            "transcript": existing_session.get("transcript", []),
+            "milestones": existing_session.get("milestones", []),
+            "started_at": existing_session.get("started_at", time.time()),
+            "penalty": existing_session.get("penalty", 0.0),
+            "last_user": msg.text.strip(),  # <- ensure non-empty
+        })
+
         out: State = await graph.ainvoke(state)
         graph_duration = time.time() - graph_start
 
-        if not isinstance(out, dict):
+        if not isinstance(out, dict) or out is None:
+        # graceful fallback path instead of 500
             struct_logger.error(
                 "graph.invalid_output",
                 session_id=msg.session_id,
-                output_type=type(out).__name__,
+                output_type=type(out).__name__ if out is not None else "NoneType",
             )
-            raise HTTPException(status_code=500, detail="Graph returned invalid state")
+            out = dict(state)
+            out["last_bot"] = "Got it—could you share the customer’s goal and any HAR/network logs so I can zero in?"
 
         # Ensure bot response exists
         if "last_bot" not in out:
@@ -677,6 +767,17 @@ async def reply(msg: Msg):
             attachments_count=len(attachments),
             response_length=len(out["last_bot"]),
         )
+
+        # Persist a complete snapshot to JSONL for export/restore
+        save_session(msg.session_id, {
+            "session_id": msg.session_id,
+            "started_at": updated_session_data["started_at"],
+            "transcript": out.get("transcript", []),
+            "milestones": out.get("milestones", []),
+            "penalty": out.get("penalty", 0.0),
+            "phase": out.get("phase", existing_session.get("phase", "intro")),
+            "last_bot": out.get("last_bot", ""),
+        })
 
         return {
             "message": out["last_bot"],
@@ -848,6 +949,8 @@ async def health():
         "status": "healthy",
         "timestamp": time.time(),
         "scenario_loaded": SCEN is not None,
+        "provider": _provider_meta(),  # <- new
+
     }
 
 
