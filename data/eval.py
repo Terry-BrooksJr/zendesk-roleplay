@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-import argparse, json, os, time, statistics
+import argparse
+import json
+import statistics
+import time
+from datetime import datetime, timezone
 from pathlib import Path
-from datetime import datetime
 
 import numpy as np
 import pandas as pd
 import yaml
-
-from datasets import load_dataset, Dataset
-from datetime import timezone
+from datasets import Dataset, load_dataset
 from evaluate import load as load_metric
 from transformers import pipeline
 
@@ -50,7 +51,9 @@ def per_class_f1(y_true, y_pred, labels):
     for lab in labels:
         y_true_bin = [1 if y == lab else 0 for y in y_true]
         y_pred_bin = [1 if y == lab else 0 for y in y_pred]
-        scores[lab] = f1_metric.compute(predictions=y_pred_bin, references=y_true_bin, average="binary")["f1"]
+        scores[lab] = f1_metric.compute(
+            predictions=y_pred_bin, references=y_true_bin, average="binary"
+        )["f1"]
     return scores
 
 
@@ -66,7 +69,9 @@ def build_pipe(model_spec: dict, device="auto"):
     return pipeline(task=t, model=m, device_map=device, truncation=True, top_k=None)
 
 
-def eval_model_on_split(pipe, split: Dataset, labels, text_col: str, label_col: str, task_type: str):
+def eval_model_on_split(
+    pipe, split: Dataset, labels, text_col: str, label_col: str, task_type: str
+):
     acc_metric = load_metric("accuracy")
     f1_metric = load_metric("f1")
 
@@ -99,7 +104,9 @@ def eval_model_on_split(pipe, split: Dataset, labels, text_col: str, label_col: 
 
     # metrics
     acc = acc_metric.compute(predictions=preds, references=refs)["accuracy"]
-    f1_macro = f1_metric.compute(predictions=preds, references=refs, average="macro")["f1"]
+    f1_macro = f1_metric.compute(predictions=preds, references=refs, average="macro")[
+        "f1"
+    ]
 
     # per-class F1
     f1_by_class = per_class_f1(refs, preds, labels)
@@ -118,7 +125,7 @@ def eval_model_on_split(pipe, split: Dataset, labels, text_col: str, label_col: 
         y_true_idx, y_pred_idx = zip(*filt)
         cm = confusion_matrix(y_true_idx, y_pred_idx, len(labels)).tolist()
     else:
-        cm = [[0]*len(labels) for _ in labels]
+        cm = [[0] * len(labels) for _ in labels]
 
     return {
         "accuracy": acc,
@@ -126,11 +133,8 @@ def eval_model_on_split(pipe, split: Dataset, labels, text_col: str, label_col: 
         "f1_by_class": f1_by_class,
         "latency_p50": p50,
         "latency_p95": p95,
-        "confusion_matrix": {
-            "labels": labels,
-            "matrix": cm
-        },
-        "num_examples": len(refs)
+        "confusion_matrix": {"labels": labels, "matrix": cm},
+        "num_examples": len(refs),
     }
 
 
@@ -143,7 +147,9 @@ def evaluate_all(cfg: dict):
 
     ds = load_splits(cfg)
     if split_name not in ds:
-        raise ValueError(f"Split '{split_name}' not found in datasets. Available: {list(ds.keys())}")
+        raise ValueError(
+            f"Split '{split_name}' not found in datasets. Available: {list(ds.keys())}"
+        )
 
     results = []
     for cand in cfg.get("candidates", []):
@@ -154,7 +160,7 @@ def evaluate_all(cfg: dict):
             labels=labels,
             text_col=text_col,
             label_col=label_col,
-            task_type=cand.get("type", pipe.task)
+            task_type=cand.get("type", pipe.task),
         )
         model_id = cand["model"]
         results.append({"model": model_id, **r})
@@ -165,7 +171,11 @@ def evaluate_all(cfg: dict):
 def check_thresholds(cfg, model_result):
     thresholds = {m["name"]: m for m in cfg.get("metrics", [])}
     verdicts = []
-    for key, val in (("accuracy", model_result["accuracy"]), ("f1_macro", model_result["f1_macro"]), ("latency_p95", model_result["latency_p95"])):
+    for key, val in (
+        ("accuracy", model_result["accuracy"]),
+        ("f1_macro", model_result["f1_macro"]),
+        ("latency_p95", model_result["latency_p95"]),
+    ):
         if key in thresholds and "threshold" in thresholds[key]:
             thr = thresholds[key]["threshold"]
             ok = (val >= thr) if key != "latency_p95" else (val <= thr)
@@ -185,7 +195,7 @@ def write_reports(cfg, results):
         "task": cfg.get("task"),
         "labels": cfg.get("labels"),
         "split": cfg.get("evaluation", {}).get("split", "validation"),
-        "results": []
+        "results": [],
     }
     for r in results:
         entry = dict(r)
@@ -212,16 +222,22 @@ def write_reports(cfg, results):
             md_lines.append("- Threshold checks:")
             for c in checks:
                 status = "✅" if c["pass"] else "❌"
-                md_lines.append(f"  - {status} {c['metric']}: {c['value']:.3f} vs threshold {c['threshold']}")
+                md_lines.append(
+                    f"  - {status} {c['metric']}: {c['value']:.3f} vs threshold {c['threshold']}"
+                )
         # per-class F1
         md_lines.append("\nPer-class F1:")
-        df = pd.DataFrame.from_dict(r["f1_by_class"], orient="index", columns=["f1"]).sort_values("f1", ascending=False)
+        df = pd.DataFrame.from_dict(
+            r["f1_by_class"], orient="index", columns=["f1"]
+        ).sort_values("f1", ascending=False)
         md_lines.append(df.to_markdown())
         # confusion matrix
         md_lines.append("\nConfusion Matrix:")
         labs = r["confusion_matrix"]["labels"]
         mat = r["confusion_matrix"]["matrix"]
-        df_cm = pd.DataFrame(mat, index=[f"T:{l}" for l in labs], columns=[f"P:{l}" for l in labs])
+        df_cm = pd.DataFrame(
+            mat, index=[f"T:{l}" for l in labs], columns=[f"P:{l}" for l in labs]
+        )
         md_lines.append(df_cm.to_markdown())
         md_lines.append("\n---\n")
 
@@ -234,14 +250,16 @@ def write_reports(cfg, results):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", "-c", default="usecase.yaml", help="Path to usecase.yaml")
+    parser.add_argument(
+        "--config", "-c", default="usecase.yaml", help="Path to usecase.yaml"
+    )
     args = parser.parse_args()
 
     cfg = load_config(args.config)
     results = evaluate_all(cfg)
     json_path, md_path = write_reports(cfg, results)
 
-    print(f"✅ Evaluation complete.")
+    print("✅ Evaluation complete.")
     print(f"JSON report: {json_path}")
     print(f"Markdown report: {md_path}")
 

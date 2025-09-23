@@ -59,8 +59,62 @@ class TextClassifier:
     """
 
     # Rule definitions
+    # !TODO - Finish Converting _rules to INTENTS and update app logic to parse a list of dicts instead of  a dict of lists
+    # INTENTS = [
+    #         "confirm_learnosity_implementation_details": {
+    #             "description": "Detect messages that talk about the technical implementation of Learnosity — init/initialization flows, security signing (consumer_key/secret, signed request objects), versioning (especially LTS), request/payload structure, Items / Questions / Reports / Data APIs, callbacks, item bank references, and how components are wired together technically.",
+    #             "rules": [
+    #             r"learnosity",
+    #             r"lts\sversion",
+    #             r"author\s?\s+api",
+    #             r"items\s+api",
+    #             r"assessments?\s+api",
+    #             r"questions?\s+api",
+    #             r"reports?\s+api",
+    #             r"data\s+api",
+    #             r"learnosity\s+api",
+    #             r"disractor\sratonale",
+    #             r"disractor\s+rationale",
+    #             r"consumer\s+key",
+    #             r"consumer\s+secret",
+    #             r"security\s+signature",
+    #             r"initialization\s+object",
+    #             r"request\s+object",
+    #             r"activity\s+template",
+    #             r"items?\s+configuration",
+
+    #         ],
+    #         },
+    #         "ask_for_diagnostic_data": {
+    #             "description": "IDetect messages that request or seek additional technical or environmental evidence beyond user narrative — e.g. logs/observations/monitoring platform outputs (Prometheus, Grafana, etc.), performance metrics like latency/download/upload speed, screenshots, screen recordings, HAR files, traces, or any artifacts that would help to diagnose what’s going on under the hood.",
+    #             "rules": [
+    #             r"\bhar\b",
+    #             r"network\s+log",
+    #             r"devtools?",
+    #             r"fiddler",
+    #             r"wireshark",
+    #             r"postman",
+    #             r"curl",
+    #             r"http\s+trace",
+    #             r"trace\s+log",
+    #             r"capture\s+log",
+    #             r"screen\s+recording",
+    #             r"screencast",
+    #             r"video\s+recording",
+    #             r"video\s+clip",
+    #             r"screenshot",
+    #             r"screen\s+shot",
+    #             r"network\s+tab",
+    #             r"traceback",
+    #             r"preserve\s+log",
+    #             r"export\s+.*har",
+    #             r"console\s+log",
+    #         ]
+
+    # }
+    #     ]
+
     _rules = {
-        
         "confirm_learnosity_implementation_details": [
             r"learnosity",
             r"lts\sversion",
@@ -80,9 +134,7 @@ class TextClassifier:
             r"request\s+object",
             r"activity\s+template",
             r"items?\s+configuration",
-            
         ],
-            
         "ask_for_diagnostic_data": [
             r"\bhar\b",
             r"network\s+log",

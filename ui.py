@@ -2,38 +2,42 @@ import os
 
 import gradio as gr
 import requests
-from loguru import logger
 from gradio_modal import Modal
-import tempfile
+from loguru import logger
+
 
 def make_download_file(session_id: str, fmt: str):
     if not session_id:
         return None
-    url = f"{BASE}/transcript?session_id={session_id}&fmt={fmt}"
-    r = requests.get(url, timeout=30)
-    r.raise_for_status()
-    suffix = ".jsonl" if fmt == "jsonl" else f".{fmt}"
-    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
-    tmp.write(r.content)
-    tmp.flush()
-    tmp.close()
-    return tmp.name
+    #     url = f"{BASE}/transcript?session_id={session_id}&fmt={fmt}"
+    #     r = requests.get(url, timeout=30)
+    #     r.raise_for_status()
+    #     suffix = ".jsonl" if fmt == "jsonl" else f".{fmt}"
+    #     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+    #     tmp.write(r.content)
+    #     tmp.flush()
+    #     tmp.close()
+    #     return tmp.name
 
-with gr.Row():
-    fmt_dd = gr.Dropdown(
-        choices=["jsonl", "json", "txt"],
-        value="jsonl",
-        label="Export format",
-    )
-    dl_btn = gr.DownloadButton(
-        label="⬇️ Download Transcript",
-        value=None,
-    )
+    # with gr.Row():
+    #     fmt_dd = gr.Dropdown(
+    #         choices=["jsonl", "json", "txt"],
+    #         value="jsonl",
+    #         label="Export format",
+    #     )
+    #     dl_btn = gr.DownloadButton(
+    #         label="⬇️ Download Transcript",
+    #         value=None,
+    #     )
 
-def on_download(fmt):
-    return make_download_file(session_state.value, fmt)
+    def on_download(fmt):
+        # friendly guard: no session yet
+        if not session_state.value:
+            return None
+        return make_download_file(session_state.value, fmt)
 
-dl_btn.click(on_download, inputs=fmt_dd, outputs=dl_btn)
+    dl_btn.click(on_download, inputs=fmt_dd, outputs=dl_btn)
+
 
 # --- Helper to resolve BASE backend URL ---
 def resolve_base():
@@ -73,7 +77,9 @@ def start_session(candidate_label):
     logger.info(f"Starting session for candidate_label={candidate_label}")
     try:
         r = requests.post(
-            f"{BASE}/start", json={"candidate_label": candidate_label or "anon"}, timeout=30
+            f"{BASE}/start",
+            json={"candidate_label": candidate_label or "anon"},
+            timeout=30,
         )
         r.raise_for_status()
         jd = r.json()
@@ -191,7 +197,9 @@ def chat_fn(user_msg, history, session_id):  # sourcery skip: low-code-quality
     if not bot:
         try:
             rr = requests.post(
-                f"{BASE}/reply", json={"session_id": session_id, "text": text}, timeout=30
+                f"{BASE}/reply",
+                json={"session_id": session_id, "text": text},
+                timeout=30,
             )
             rr.raise_for_status()
             jd = rr.json()
@@ -280,9 +288,11 @@ with gr.Blocks() as demo:
         """
         )
         name = gr.Textbox(
-        label="Candidate Label (not stored as PII)", placeholder="Provided in email to you"
-    )
+            label="Candidate Label (not stored as PII)",
+            placeholder="Provided in email to you",
+        )
         start_btn = gr.Button("Start Scenario")
+
     def on_start(label):
         """Initializes a new session and updates the chat interface with the initial message.
 
@@ -299,9 +309,21 @@ with gr.Blocks() as demo:
         # hist is already a list of {role, content} dicts for messages mode
         return gr.update(value=hist), Modal(visible=False)
 
-    review_btn.click(lambda: (Modal(visible=True), Modal(visible=False), Modal(visible=False)), None, [intro_modal, scenario_modal, prereading_modal])
-    scenario_desc_btn.click(lambda: (Modal(visible=False), Modal(visible=True), Modal(visible=False)), None, [intro_modal, scenario_modal, prereading_modal])
-    relevant_btn.click(lambda: (Modal(visible=False), Modal(visible=False), Modal(visible=True)), None, [intro_modal, scenario_modal, prereading_modal])
+    review_btn.click(
+        lambda: (Modal(visible=True), Modal(visible=False), Modal(visible=False)),
+        None,
+        [intro_modal, scenario_modal, prereading_modal],
+    )
+    scenario_desc_btn.click(
+        lambda: (Modal(visible=False), Modal(visible=True), Modal(visible=False)),
+        None,
+        [intro_modal, scenario_modal, prereading_modal],
+    )
+    relevant_btn.click(
+        lambda: (Modal(visible=False), Modal(visible=False), Modal(visible=True)),
+        None,
+        [intro_modal, scenario_modal, prereading_modal],
+    )
     start_btn.click(on_start, inputs=name, outputs=[chat.chatbot, prereading_modal])
 
 if __name__ == "__main__":

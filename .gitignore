@@ -269,5 +269,7 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,django
 .envrc
-data.db
+*.db
 .task
+sessions/*.jsonl
+data/*-eval.py

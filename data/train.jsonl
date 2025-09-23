@@ -1,122 +1,176 @@
-{"text": "Could you please send over the logs?", "label": "ask_for_logs"}
-{"text": "I need the HAR file to investigate further.", "label": "ask_for_logs"}
-{"text": "Can you provide the logs from your last session?", "label": "ask_for_logs"}
-{"text": "Please share the HAR logs so we can check the issue.", "label": "ask_for_logs"}
-{"text": "Would you mind uploading the logs?", "label": "ask_for_logs"}
-{"text": "Logs would be helpful to diagnose the problem.", "label": "ask_for_logs"}
-{"text": "Can you attach the HAR file here?", "label": "ask_for_logs"}
-{"text": "I require the logs to proceed with troubleshooting.", "label": "ask_for_logs"}
-{"text": "Please send the HAR logs at your earliest convenience.", "label": "ask_for_logs"}
-{"text": "Do you have the logs available to share?", "label": "ask_for_logs"}
-{"text": "Could you upload the HAR file so I can look into it?", "label": "ask_for_logs"}
-{"text": "We need the logs to identify the root cause.", "label": "ask_for_logs"}
-{"text": "Please provide the HAR logs to continue.", "label": "ask_for_logs"}
-{"text": "Can you get me the logs from your device?", "label": "ask_for_logs"}
-{"text": "Sharing the HAR logs will help us analyze the issue.", "label": "ask_for_logs"}
-{"text": "I’d like to review the logs; can you send them?", "label": "ask_for_logs"}
-{"text": "Please upload the HAR file for further investigation.", "label": "ask_for_logs"}
-{"text": "Could you share the logs with me?", "label": "ask_for_logs"}
-{"text": "Logs are needed to move forward with support.", "label": "ask_for_logs"}
-{"text": "Can you provide the HAR logs?", "label": "ask_for_logs"}
-{"text": "Please attach the logs for analysis.", "label": "ask_for_logs"}
-{"text": "I need the HAR file to check the problem.", "label": "ask_for_logs"}
-{"text": "Could you send the logs?", "label": "ask_for_logs"}
-{"text": "Please share the HAR logs.", "label": "ask_for_logs"}
-{"text": "Can you upload the logs?", "label": "ask_for_logs"}
-{"text": "We require the HAR file to troubleshoot.", "label": "ask_for_logs"}
-{"text": "Please provide the logs.", "label": "ask_for_logs"}
-{"text": "Could you get the HAR logs?", "label": "ask_for_logs"}
-{"text": "I’d appreciate if you could send the logs.", "label": "ask_for_logs"}
-{"text": "Can you send the HAR file?", "label": "ask_for_logs"}
-{"text": "What is the goal you want to achieve?", "label": "ask_for_goal"}
+{"text": "Could you please provide the logs related to this issue?", "label": "ask_for_diagnostic_data"}
+{"text": "I need the HAR files to investigate further.", "label": "ask_for_diagnostic_data"}
+{"text": "Can you send over the log files?", "label": "ask_for_diagnostic_data"}
+{"text": "Please share the logs so I can check what went wrong.", "label": "ask_for_diagnostic_data"}
+{"text": "Do you have the HAR data available?", "label": "ask_for_diagnostic_data"}
+{"text": "Could you upload the logs for analysis?", "label": "ask_for_diagnostic_data"}
+{"text":"We use the Node SDK’s sign method to generate the Security object before calling LearnosityItems.init.","label":"confirm_learnosity_implementation_details"}
+{"text":"The request object includes consumer_key, user_id, and session_id — signature is created server-side.","label":"confirm_learnosity_implementation_details"}
+{"text":"Did we pin the API to a certain LTS version or allow auto-upgrade?","label":"confirm_learnosity_implementation_details"}
+{"text":"Are we passing item references from the bank or embedding full item objects in Items initialization?","label":"confirm_learnosity_implementation_details"}
+{"text":"How does our init callback handle errors from the Report API widget?","label":"confirm_learnosity_implementation_details"}
+{"text":"Is the secret key ever exposed in the UI during Learnosity initialization?","label":"confirm_learnosity_implementation_details"}
+{"text":"We configured activity_template_id instead of listing items array manually.","label":"confirm_learnosity_implementation_details"}
+{"text":"The front-end uses learnosityApp.init without exposing the consumer_secret.","label":"confirm_learnosity_implementation_details"}
+{"text":"We set rendering_type to 'assess' and include config.configuration.lazyload false.","label":"confirm_learnosity_implementation_details"}
+{"text":"User_id is derived from our auth system, session_id is per-attempt UUID.","label":"confirm_learnosity_implementation_details"}
+{"text":"Dynamic_items is turned on to generate variations across question parameters.","label":"confirm_learnosity_implementation_details"}
+{"text":"We override default scoring_type in the request payload for Items API.","label":"confirm_learnosity_implementation_details"}
+{"text":"Our Reports API init payload includes version numbers for both Questions and Items APIs.","label":"confirm_learnosity_implementation_details"}
+{"text":"We proxy the init JSON via our server to insert the signed security object with timestamp + domain.","label":"confirm_learnosity_implementation_details"}
+{"text":"The initialization includes callbacks for readyListener and errorListener for Items API.","label":"confirm_learnosity_implementation_details"}
+{"text": "I require the logs to proceed with troubleshooting.", "label": "ask_for_diagnostic_data"}
+{"text": "Please provide the HAR export from your browser.", "label": "ask_for_diagnostic_data"}
+{"text": "Can you send the relevant log files?", "label": "ask_for_diagnostic_data"}
+{"text": "Would you mind sharing the HAR logs?", "label": "ask_for_diagnostic_data"}
+{"text": "I need the logs to understand the problem better.", "label": "ask_for_diagnostic_data"}
+{"text": "Could you get me the HAR files, please?", "label": "ask_for_diagnostic_data"}
+{"text": "Please send the logs so I can look into the issue.", "label": "ask_for_diagnostic_data"}
+{"text": "Can you provide the HAR capture?", "label": "ask_for_diagnostic_data"}
+{"text": "I’d like to see the logs to diagnose this.", "label": "ask_for_diagnostic_data"}
+{"text": "Could you share the HAR logs?", "label": "ask_for_diagnostic_data"}
+{"text": "Please upload the log files for review.", "label": "ask_for_diagnostic_data"}
+{"text": "I need the HAR data to continue.", "label": "ask_for_diagnostic_data"}
+{"text": "Would you send the logs, please?", "label": "ask_for_diagnostic_data"}
+{"text": "Could you provide the relevant logs?", "label": "ask_for_diagnostic_data"}
+{"text": "Please share the HAR files with me.", "label": "ask_for_diagnostic_data"}
+{"text": "Can you send the logs for further analysis?", "label": "ask_for_diagnostic_data"}
+{"text": "I require the HAR export to move forward.", "label": "ask_for_diagnostic_data"}
+{"text": "Please give me the log files.", "label": "ask_for_diagnostic_data"}
+{"text": "Could you upload the HAR logs?", "label": "ask_for_diagnostic_data"}
+{"text": "I’d appreciate the logs to investigate.", "label": "ask_for_diagnostic_data"}
+{"text": "Can you provide the logs?", "label": "ask_for_diagnostic_data"}
+{"text": "Please send the HAR data.", "label": "ask_for_diagnostic_data"}
+{"text": "Could you share the logs?", "label": "ask_for_diagnostic_data"}
+{"text": "I need the log files to help you.", "label": "ask_for_diagnostic_data"}
+{"text": "What is your goal with this task?", "label": "ask_for_goal"}
+{"text": "Could you explain what you want to achieve?", "label": "ask_for_goal"}
+{"text": "Please tell me your objective.", "label": "ask_for_goal"}
+{"text": "What’s the goal you’re trying to reach?", "label": "ask_for_goal"}
+{"text": "Can you share the intended outcome?", "label": "ask_for_goal"}
+{"text": "What result are you aiming for?", "label": "ask_for_goal"}
 {"text": "Could you clarify your goal?", "label": "ask_for_goal"}
-{"text": "Please tell me what you aim to do.", "label": "ask_for_goal"}
-{"text": "What’s the objective here?", "label": "ask_for_goal"}
-{"text": "Can you share your goal with me?", "label": "ask_for_goal"}
-{"text": "What are you trying to accomplish?", "label": "ask_for_goal"}
-{"text": "Could you explain your goal?", "label": "ask_for_goal"}
-{"text": "Please describe what you want to achieve.", "label": "ask_for_goal"}
-{"text": "What is the end goal?", "label": "ask_for_goal"}
-{"text": "Can you specify your objective?", "label": "ask_for_goal"}
-{"text": "Tell me about your goal.", "label": "ask_for_goal"}
-{"text": "What do you want to get done?", "label": "ask_for_goal"}
+{"text": "Please describe what you want to accomplish.", "label": "ask_for_goal"}
+{"text": "What’s the end goal here?", "label": "ask_for_goal"}
+{"text": "Can you tell me your purpose?", "label": "ask_for_goal"}
+{"text": "What are you trying to achieve?", "label": "ask_for_goal"}
 {"text": "Could you state your goal?", "label": "ask_for_goal"}
-{"text": "Please let me know your objective.", "label": "ask_for_goal"}
-{"text": "What’s the desired outcome?", "label": "ask_for_goal"}
-{"text": "Can you tell me the goal?", "label": "ask_for_goal"}
-{"text": "What are you hoping to achieve?", "label": "ask_for_goal"}
-{"text": "Please share your intended goal.", "label": "ask_for_goal"}
-{"text": "Could you clarify the goal?", "label": "ask_for_goal"}
-{"text": "What is your target?", "label": "ask_for_goal"}
-{"text": "Tell me your goal.", "label": "ask_for_goal"}
-{"text": "Can you explain your aim?", "label": "ask_for_goal"}
+{"text": "Please share your objective.", "label": "ask_for_goal"}
+{"text": "What’s your intended goal?", "label": "ask_for_goal"}
+{"text": "Can you explain the aim?", "label": "ask_for_goal"}
+{"text": "What is the target outcome?", "label": "ask_for_goal"}
+{"text": "Could you let me know your goal?", "label": "ask_for_goal"}
+{"text": "Please tell me the result you want.", "label": "ask_for_goal"}
+{"text": "What’s the main objective?", "label": "ask_for_goal"}
+{"text": "Can you describe your goal?", "label": "ask_for_goal"}
+{"text": "What goal are you working towards?", "label": "ask_for_goal"}
+{"text": "Could you share your aim?", "label": "ask_for_goal"}
+{"text": "Please explain what you want to do.", "label": "ask_for_goal"}
 {"text": "What outcome do you expect?", "label": "ask_for_goal"}
-{"text": "Please specify your goal.", "label": "ask_for_goal"}
-{"text": "Could you share the objective?", "label": "ask_for_goal"}
-{"text": "What is your desired result?", "label": "ask_for_goal"}
 {"text": "Can you tell me your goal?", "label": "ask_for_goal"}
-{"text": "What are you trying to do?", "label": "ask_for_goal"}
-{"text": "Please describe your aim.", "label": "ask_for_goal"}
-{"text": "Could you specify your target?", "label": "ask_for_goal"}
-{"text": "What’s the goal here?", "label": "ask_for_goal"}
-{"text": "Can you provide the reproduction steps?", "label": "ask_for_repro"}
-{"text": "Please share how to reproduce the issue.", "label": "ask_for_repro"}
-{"text": "Could you explain the steps to reproduce?", "label": "ask_for_repro"}
-{"text": "What are the repro steps?", "label": "ask_for_repro"}
-{"text": "Can you list the steps to recreate the problem?", "label": "ask_for_repro"}
-{"text": "Please provide reproduction instructions.", "label": "ask_for_repro"}
-{"text": "How can I reproduce this issue?", "label": "ask_for_repro"}
-{"text": "Could you share the reproduction process?", "label": "ask_for_repro"}
-{"text": "Tell me the steps to reproduce the bug.", "label": "ask_for_repro"}
-{"text": "Can you give the repro steps?", "label": "ask_for_repro"}
-{"text": "Please explain how to reproduce the issue.", "label": "ask_for_repro"}
-{"text": "What steps did you take to reproduce this?", "label": "ask_for_repro"}
+{"text": "What are you hoping to achieve?", "label": "ask_for_goal"}
+{"text": "Could you specify your goal?", "label": "ask_for_goal"}
+{"text": "Please state your objective.", "label": "ask_for_goal"}
+{"text": "What’s your desired result?", "label": "ask_for_goal"}
+{"text": "Can you share your target?", "label": "ask_for_goal"}
 {"text": "Could you provide the reproduction steps?", "label": "ask_for_repro"}
-{"text": "How do I replicate the problem?", "label": "ask_for_repro"}
+{"text": "Please give me the steps to reproduce the issue.", "label": "ask_for_repro"}
+{"text": "How can I replicate the problem?", "label": "ask_for_repro"}
+{"text": "Can you describe how to reproduce this bug?", "label": "ask_for_repro"}
+{"text": "What are the reproduction steps?", "label": "ask_for_repro"}
 {"text": "Please share the exact steps to reproduce.", "label": "ask_for_repro"}
-{"text": "Can you describe the reproduction procedure?", "label": "ask_for_repro"}
-{"text": "What is the sequence to reproduce the bug?", "label": "ask_for_repro"}
-{"text": "Could you list the steps to recreate the issue?", "label": "ask_for_repro"}
-{"text": "Please provide the steps for reproduction.", "label": "ask_for_repro"}
-{"text": "How can the issue be reproduced?", "label": "ask_for_repro"}
-{"text": "Can you share how to reproduce this bug?", "label": "ask_for_repro"}
-{"text": "Tell me how to reproduce the problem.", "label": "ask_for_repro"}
-{"text": "Please describe the reproduction steps.", "label": "ask_for_repro"}
-{"text": "Could you explain the repro process?", "label": "ask_for_repro"}
-{"text": "What steps should I follow to reproduce?", "label": "ask_for_repro"}
-{"text": "Can you provide the reproduction details?", "label": "ask_for_repro"}
-{"text": "Please share the reproduction method.", "label": "ask_for_repro"}
-{"text": "How do I reproduce this issue?", "label": "ask_for_repro"}
-{"text": "Could you tell me the repro steps?", "label": "ask_for_repro"}
+{"text": "Could you tell me how to reproduce the issue?", "label": "ask_for_repro"}
+{"text": "I need the reproduction process.", "label": "ask_for_repro"}
+{"text": "Can you provide the steps to replicate?", "label": "ask_for_repro"}
+{"text": "How do I reproduce this problem?", "label": "ask_for_repro"}
+{"text": "Please describe the repro steps.", "label": "ask_for_repro"}
+{"text": "Could you share the reproduction instructions?", "label": "ask_for_repro"}
+{"text": "What steps do I need to follow to reproduce?", "label": "ask_for_repro"}
+{"text": "Can you explain how to reproduce the bug?", "label": "ask_for_repro"}
+{"text": "Please provide the reproduction steps.", "label": "ask_for_repro"}
+{"text": "How can I reproduce this issue?", "label": "ask_for_repro"}
+{"text": "Could you give me the repro steps?", "label": "ask_for_repro"}
+{"text": "Please tell me how to replicate the bug.", "label": "ask_for_repro"}
+{"text": "What’s the process to reproduce?", "label": "ask_for_repro"}
+{"text": "Can you detail the reproduction steps?", "label": "ask_for_repro"}
+{"text": "How do I replicate the issue?", "label": "ask_for_repro"}
+{"text": "Please share how to reproduce this.", "label": "ask_for_repro"}
+{"text": "Could you provide reproduction instructions?", "label": "ask_for_repro"}
 {"text": "What are the exact steps to reproduce?", "label": "ask_for_repro"}
-{"text": "Can you provide the context for the issue?", "label": "ask_for_context"}
-{"text": "Please share any relevant background information.", "label": "ask_for_context"}
-{"text": "Could you explain the context around this problem?", "label": "ask_for_context"}
-{"text": "What’s the context of this issue?", "label": "ask_for_context"}
-{"text": "Can you provide more details about the situation?", "label": "ask_for_context"}
-{"text": "Please describe the environment or context.", "label": "ask_for_context"}
-{"text": "Could you share the circumstances leading to this?", "label": "ask_for_context"}
-{"text": "What context can you give about the problem?", "label": "ask_for_context"}
-{"text": "Can you provide background info?", "label": "ask_for_context"}
-{"text": "Please share the setup details.", "label": "ask_for_context"}
-{"text": "Could you tell me about the context?", "label": "ask_for_context"}
-{"text": "What’s the scenario here?", "label": "ask_for_context"}
-{"text": "Can you provide the relevant context?", "label": "ask_for_context"}
-{"text": "Please explain the situation.", "label": "ask_for_context"}
-{"text": "Could you share more about the environment?", "label": "ask_for_context"}
-{"text": "What background info can you provide?", "label": "ask_for_context"}
-{"text": "Can you tell me the context of this issue?", "label": "ask_for_context"}
-{"text": "Please provide details about the environment.", "label": "ask_for_context"}
-{"text": "Could you describe the situation?", "label": "ask_for_context"}
-{"text": "What context do you have for this problem?", "label": "ask_for_context"}
-{"text": "Can you share the background?", "label": "ask_for_context"}
+{"text": "Can you describe the process to reproduce?", "label": "ask_for_repro"}
+{"text": "Please give me the steps for replication.", "label": "ask_for_repro"}
+{"text": "How can I replicate the bug?", "label": "ask_for_repro"}
+{"text": "Could you explain the reproduction steps?", "label": "ask_for_repro"}
+{"text": "I need the exact reproduction procedure.", "label": "ask_for_repro"}
+{"text": "What steps do I follow to reproduce?", "label": "ask_for_repro"}
+{"text": "Can you share the reproduction method?", "label": "ask_for_repro"}
+{"text": "Please provide instructions to reproduce.", "label": "ask_for_repro"}
+{"text": "What context can you share about the issue?", "label": "ask_for_context"}
+{"text": "Could you give me more background information?", "label": "ask_for_context"}
+{"text": "Please provide additional context.", "label": "ask_for_context"}
+{"text": "Can you share the environment details?", "label": "ask_for_context"}
+{"text": "What’s the context around this problem?", "label": "ask_for_context"}
+{"text": "Could you explain the circumstances?", "label": "ask_for_context"}
+{"text": "Please tell me more about the situation.", "label": "ask_for_context"}
+{"text": "Can you provide the context for this issue?", "label": "ask_for_context"}
+{"text": "What environment are you running this in?", "label": "ask_for_context"}
+{"text": "Could you share relevant details about the setup?", "label": "ask_for_context"}
+{"text": "Please give me context to understand better.", "label": "ask_for_context"}
+{"text": "Can you describe the conditions when this happens?", "label": "ask_for_context"}
+{"text": "What’s the background for this issue?", "label": "ask_for_context"}
+{"text": "Could you provide more info about the environment?", "label": "ask_for_context"}
+{"text": "Please share any relevant context.", "label": "ask_for_context"}
+{"text": "Can you explain the scenario?", "label": "ask_for_context"}
+{"text": "What are the details surrounding this problem?", "label": "ask_for_context"}
+{"text": "Could you give me the context details?", "label": "ask_for_context"}
+{"text": "Please provide environment specifics.", "label": "ask_for_context"}
+{"text": "Can you share more about the conditions?", "label": "ask_for_context"}
+{"text": "What context can you add?", "label": "ask_for_context"}
+{"text": "Could you describe the setup?", "label": "ask_for_context"}
 {"text": "Please tell me about the environment.", "label": "ask_for_context"}
-{"text": "Could you provide the circumstances?", "label": "ask_for_context"}
-{"text": "What’s the background on this?", "label": "ask_for_context"}
-{"text": "Can you explain the setup?", "label": "ask_for_context"}
-{"text": "Please share the relevant details.", "label": "ask_for_context"}
-{"text": "Could you give context for the issue?", "label": "ask_for_context"}
-{"text": "What’s the situation here?", "label": "ask_for_context"}
-{"text": "Can you provide environment details?", "label": "ask_for_context"}
-{"text": "Please explain the background information.", "label": "ask_for_context"}
-{"text": "Could you share the setup info?", "label": "ask_for_context"}
+{"text": "Can you provide background info?", "label": "ask_for_context"}
+{"text": "What’s the situation when this occurs?", "label": "ask_for_context"}
+{"text": "Could you share details about your environment?", "label": "ask_for_context"}
+{"text": "Please provide any additional context.", "label": "ask_for_context"}
+{"text": "Can you explain the background?", "label": "ask_for_context"}
+{"text": "What details can you share about the issue?", "label": "ask_for_context"}
+{"text":"Try updating the LTS version to the latest supported release to avoid deprecated behavior.","label":"propose_fix"}
+{"text":"Modify the signature generation to include the correct timestamp format to satisfy Learnosity’s security requirements.","label":"propose_fix"}
+{"text":"Ensure the request object includes user_id, session_id, and activity_id before calling LearnosityItems.init.","label":"propose_fix"}
+{"text":"Switch to using item references instead of embedding full item objects to improve performance.","label":"propose_fix"}
+{"text":"Wrap the security-signing logic server-side so the consumer_secret is never exposed to the front end.","label":"propose_fix"}
+{"text":"Enable lazy loading of items in the init payload so only visible items load initially.","label":"propose_fix"}
+{"text":"Add errorListener and readyListener callbacks to catch init failures in the UI.","label":"propose_fix"}
+{"text":"Pin your Learnosity SDK to an LTS version to avoid breakages with API changes.","label":"propose_fix"}
+{"text":"Set the domain field in the security object to your production host exactly as Learnosity expects.","label":"propose_fix"}
+{"text":"Validate the items array against published items in the bank so you don’t reference unpublished item IDs.","label":"propose_fix"}
+{"text":"Update your consumer_key/secret pair to match the current Learnosity account credentials.","label":"propose_fix"}
+{"text":"Use HTTPS instead of HTTP in your configuration to meet Learnosity’s security enforcement.","label":"propose_fix"}
+{"text":"Include the missing `sections` field with at least one items array in the init payload.","label":"propose_fix"}
+{"text":"Check that publishEvent is enabled in your request object so Events API can work properly.","label":"propose_fix"}
+{"text":"Modify the initialization flow so LearnosityApp.init is called after the DOM hooks are loaded.","label":"propose_fix"}
+{"text":"Decrease the TTL (time-to-live) on your signed security token to reduce risk of replay attacks.","label":"propose_fix"}
+{"text":"Use the SDK’s helper methods for signature generation instead of writing custom HMAC code.","label":"propose_fix"}
+{"text":"Ensure that timestamps used in the security object are within the allowed skew (±3 hours UTC).","label":"propose_fix"}
+{"text":"Revise your front end to not reuse old session_id across attempts, generate unique session per run.","label":"propose_fix"}
+{"text":"Include correct version numbers in your initialization (Questions and Items API) to avoid mismatched schema.","label":"propose_fix"}
+{"text":"Set rendering_type to ‘assess’ for full-assessment flows instead of inline so layout behaves correctly.","label":"propose_fix"}
+{"text":"Proxy the init JSON through your backend to insert the signed security object instead of doing it client-side.","label":"propose_fix"}
+{"text":"Adjust your UI theme options in the request object to match production branding requirements.","label":"propose_fix"}
+{"text":"Use dynamic_items option to generate variation in question parameters rather than hard coding content per user.","label":"propose_fix"}
+{"text":"For devices behind proxies, ensure your allowed domain list includes both origin and proxy hosts.","label":"propose_fix"}
+{"text":"Add checks for published status of items referenced in the items array to avoid “item not found” errors.","label":"propose_fix"}
+{"text":"Make initialization asynchronous and defer non-critical widget setup until after page load to enhance perceived load speed.","label":"propose_fix"}
+{"text":"Handle network timeouts by retrying init call if events show connection errors.","label":"propose_fix"}
+{"text":"Ensure all required fields for Reports API request body are included: widget type, report type, parameters, etc.","label":"propose_fix"}
+{"text":"Update the configuration so that feature_ids include only enabled features to avoid schema validation errors.","label":"propose_fix"}
+{"text":"Make sure callback handlers for itemApp.onSubmit are implemented to handle custom logging.","label":"propose_fix"}
+{"text":"Use real published bank item IDs in your activity_template instead of dummy/test IDs.","label":"propose_fix"}
+{"text":"Ensure that binaries or modules for question types (e.g. hotspot, formula) are loaded before rendering begins.","label":"propose_fix"}
+{"text":"Reduce HTTP payload size by removing unused UI config options from the initialization object.","label":"propose_fix"}
+{"text":"Upgrade Learnosity SDK to the version that patched `event:timing` issue in the Assess API release.","label":"propose_fix"}
+{"text":"Add fallback UI in request init so if the Reports widget fails, at least user sees a message.","label":"propose_fix"}
+{"text":"Log full error details from LearnosityApp.errors in console and map error codes to user-friendly messages.","label":"propose_fix"}
+{"text":"Batch send Data API requests instead of sending one per item to reduce overhead and rate limit issues.","label":"propose_fix"}
+{"text":"Ensure your init JSON is valid JSON (no trailing commas or malformed keys) to avoid syntax parse failures.","label":"propose_fix"}
+{"text":"If multiple APIs are used (Items + Reports), ensure they share the same session_id for correlation of data.","label":"propose_fix"}
