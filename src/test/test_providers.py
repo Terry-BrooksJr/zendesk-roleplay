@@ -3,7 +3,7 @@ from typing import Dict, List
 
 import pytest
 
-from providers import (
+from ..core.providers import (
     LLMProvider,
     _inject_system_prompt,
     _truncate_history,

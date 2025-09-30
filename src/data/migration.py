@@ -18,7 +18,7 @@ from psycopg.rows import dict_row
 def run_migration():
     """Run the database migration to add session state columns."""
 
-    db_path = Path("data.db")
+    db_path = Path("data/data.db")
     if not db_path.exists():
         logger.info("Database not found. Creating new database with updated schema.")
         # If no database exists, the new schema will be created automatically
@@ -145,7 +145,7 @@ def backup_database():
     """Create a backup of the existing database before migration."""
     import shutil
 
-    db_path = Path("data.db")
+    db_path = Path("data/data.db")
     if db_path.exists():
         backup_path = f"data_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
         shutil.copy2(db_path, backup_path)

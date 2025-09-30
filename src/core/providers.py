@@ -2,20 +2,17 @@ import os
 from typing import Dict, List
 
 import httpx
-from huggingface_hub import login as hf_login
+from claude_agent_sdk import (AssistantMessage, ClaudeSDKClient, ResultMessage,
+                              TextBlock)
 from loguru import logger
-from tenacity import (
-    retry,
-    retry_if_exception_type,
-    stop_after_attempt,
-    wait_exponential_jitter,
-)
+from tenacity import (retry, retry_if_exception_type, stop_after_attempt,
+                      wait_exponential_jitter)
 
-# ENV CONFIG (with safe defaults)
-MODEL_PROVIDER = os.getenv(
-    "MODEL_PROVIDER", "openai"
-).lower()  # openai|anthropic|ollama
-MODEL_NAME = os.getenv("MODEL_NAME", "")  # per-provider default applied if blank
+from ..common.circuit_breaker import CircuitBreaker, CircuitBreakerError
+from ..data.anthropic_model_prompt import ChatClient
+
+MODEL_PROVIDER = os.environ["MODEL_PROVIDER"].lower()  # openai|anthropic|ollama
+MODEL_NAME = os.environ["MODEL_NAME"] # per-provider default applied if blank
 REQ_TIMEOUT = float(os.getenv("LLM_REQUEST_TIMEOUT", "30"))
 MAX_OUT_TOKENS = int(os.getenv("MAX_OUTPUT_TOKENS", "512"))
 
@@ -108,7 +105,12 @@ class OpenAIProvider(LLMProvider):
     def __init__(self, system_prompt: str, temperature: float, top_p: float):
         super().__init__(system_prompt, temperature, top_p)
         self.api_key = os.environ["OPENAI_API_KEY"]
-        self.model = MODEL_NAME or "gpt-4o-mini"
+        self.model = MODEL_NAME
+        self.circuit_breaker = CircuitBreaker(
+            failure_threshold=3,
+            recovery_timeout=30.0,
+            expected_exception=httpx.HTTPError
+        )
 
     @retry(
         wait=wait_exponential_jitter(1, 8),
@@ -130,6 +132,14 @@ class OpenAIProvider(LLMProvider):
         Raises:
             Exception: If the API response schema is unexpected or the request fails.
         """
+        try:
+            return await self.circuit_breaker.call(self._make_request, messages)
+        except CircuitBreakerError:
+            logger.error("OpenAI circuit breaker is open, falling back to default response")
+            return "I'm experiencing technical difficulties. Please try again later."
+
+    async def _make_request(self, messages: List[Dict[str, str]]) -> str:
+        """Internal method to make the actual API request."""
         url = "https://api.openai.com/v1/chat/completions"
         payload = {
             "model": self.model,
@@ -159,7 +169,16 @@ class AnthropicProvider(LLMProvider):
     def __init__(self, system_prompt: str, temperature: float, top_p: float):
         super().__init__(system_prompt, temperature, top_p)
         self.api_key = os.environ["ANTHROPIC_API_KEY"]
-        self.model = MODEL_NAME or "claude-3-5-sonnet-latest"
+        self.model = os.environ.get("MODEL_NAME") if os.environ.get("MODEL_NAME") else "claude-sonnet-4-5-20250929"
+        self.chat_client = ChatClient(api_key=self.api_key,tools=[
+        {
+            "name": "web_search",
+            "type": "web_search_20250305"
+        }
+    ],thinking = {
+        "type": "enabled",
+        "budget_tokens": 16000
+    },betas=["web-search-2025-03-05"])
 
     @retry(
         wait=wait_exponential_jitter(1, 8),
@@ -167,33 +186,36 @@ class AnthropicProvider(LLMProvider):
         retry=retry_if_exception_type(Exception),
         reraise=True,
     )
+
+
     async def chat(self, messages: List[Dict[str, str]]) -> str:
         # Anthropic uses separate system + messages
-        url = "https://api.anthropic.com/v1/messages"
-        user_msgs = [
-            {"role": m["role"], "content": m["content"]}
-            for m in _truncate_history(messages)
-        ]
-        payload = {
-            "model": self.model,
-            "system": self.system_prompt or None,
-            "temperature": self.temperature,
-            "top_p": self.top_p,
-            "max_tokens": MAX_OUT_TOKENS,
-            "messages": user_msgs,
-        }
-        headers = {
-            "x-api-key": self.api_key,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        }
-        async with httpx.AsyncClient(timeout=REQ_TIMEOUT) as client:
-            r = await client.post(url, headers=headers, json=payload)
-        r.raise_for_status()
-        data = r.json()
+        # url = "https://api.anthropic.com/v1/messages"
+        # user_msgs = [
+        #     {"role": m["role"], "content": m["content"]}
+        #     for m in _truncate_history(messages)
+        # ]
+        # payload = {
+        #     "model": self.model,
+        #     "system": self.system_prompt or None,
+        #     "temperature": self.temperature,
+        #     "top_p": self.top_p,
+        #     "max_tokens": MAX_OUT_TOKENS,
+        #     "messages": user_msgs,
+        # }
+        # headers = {
+        #     "x-api-key": self.api_key,
+        #     "anthropic-version": "2023-06-01",
+        #     "content-type": "application/json",
+        # }
+        # async with httpx.AsyncClient(timeout=REQ_TIMEOUT) as client:
+        #     r = await client.post(url, headers=headers, json=payload)
+        # r.raise_for_status()
+        # data = r.json()
+        response = await self.chat_client.create_message()
         try:
-            blocks = data.get("content", [])
-            text_parts = [b.get("text", "") for b in blocks if isinstance(b, dict)]
+            blocks = response.get("content", [])
+            text_parts = [b.get("text", "") for b in blocks if isinstance(b, dict) and b.get("type") == "text"]
             return "\n".join([t for t in text_parts if t]).strip()
         except Exception as e:
             logger.error(f"[Anthropic] Unexpected response schema: {data} | {e}")
@@ -248,11 +270,7 @@ def make_provider(system_prompt: str, temperature: float, top_p: float):
     Returns:
         An instance of AnthropicProvider, OllamaProvider, or OpenAIProvider.
     """
-    hf_login(
-        token=os.getenv("HUGGINGFACE_API_KEY", ""),
-        add_to_git_credential=True,
-        skip_if_logged_in=True,
-    )
+
 
     provider = os.getenv("MODEL_PROVIDER", MODEL_PROVIDER).lower()
     logger.info(f"Provider selected: {provider}")

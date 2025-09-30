@@ -5,7 +5,20 @@ import requests
 from gradio_modal import Modal
 from loguru import logger
 
-
+# Highlight.io frontend snippet
+HIGHLIGHT_IO_JS = """
+<script src="https://unpkg.com/highlight.run"></script>
+<script>
+  H.init('mem5lxpg', {
+    environment: 'production',
+    version: 'commit:abcdefg12345',
+    networkRecording: {
+      enabled: true,
+      recordHeadersAndBody: true,
+    },
+  });
+</script>
+"""
 def make_download_file(session_id: str, fmt: str):
     if not session_id:
         return None
@@ -131,7 +144,7 @@ def chat_fn(user_msg, history, session_id):  # sourcery skip: low-code-quality
     try:
         with requests.post(
             f"{BASE}/reply",
-            json={"session_id": session_id, "text": text},
+            json={"session_id": session_id, "message": text},
             stream=True,
             timeout=300,
         ) as r:
@@ -213,7 +226,7 @@ def chat_fn(user_msg, history, session_id):  # sourcery skip: low-code-quality
     return {"role": "assistant", "content": bot}
 
 
-with gr.Blocks() as demo:
+with gr.Blocks(head=HIGHLIGHT_IO_JS) as demo:
     gr.Markdown("### Zendesk-Style Roleplay (Deterministic, LangGraph)")
     session_state = gr.State("")
 
@@ -326,5 +339,10 @@ with gr.Blocks() as demo:
     )
     start_btn.click(on_start, inputs=name, outputs=[chat.chatbot, prereading_modal])
 
-if __name__ == "__main__":
+def launch_ui():
+    """Launch the Gradio UI server."""
     demo.launch(server_port=7860, show_api=False, share=False)
+
+
+if __name__ == "__main__":
+    launch_ui()

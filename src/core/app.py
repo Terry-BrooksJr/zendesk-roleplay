@@ -3,6 +3,7 @@ import time
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from typing import Any, Dict, Literal, Optional, TypedDict
+from highlight_io.integrations.fastapi import FastAPIMiddleware
 
 import yaml
 from dotenv import load_dotenv
@@ -23,11 +24,13 @@ except ImportError:  # Fallback if structlog isn't installed
 import json
 
 from fastapi.responses import JSONResponse, PlainTextResponse, Response
+from highlight_io import H
 
-from intents import detect
-from providers import make_provider
-from scoring import compute_score
-from storage import (
+from .intents import detect
+from .providers import make_provider
+from .scoring import compute_score
+from ..common.rate_limiter import rate_limit_middleware
+from ..common.storage import (
     add_milestone,
     end_session,
     get_session,
@@ -36,6 +39,14 @@ from storage import (
     log_turn,
     new_session,
     update_session,
+)
+from ..common.validation import ChatRequestModel, validate_json_input
+
+# Initialize Highlight
+H(
+    "mem5lxpg",
+    instrument_logging=True,
+    otlp_endpoint="https://otel.highlight.io:4318",
 )
 
 
@@ -47,7 +58,10 @@ async def lifespan(app: FastAPI):
 
     logger.info("Starting FastAPI application")
     struct_logger.info("application.startup", action="loading_scenario")
-
+    H.record_log(
+            level="info",
+            message=f"Starting FastAPI application"
+        )
     try:
         with open("scenario.yml", mode="r", encoding="utf-8") as f:
             SCEN = yaml.safe_load(f)
@@ -70,7 +84,10 @@ async def lifespan(app: FastAPI):
             scenario_id=SCEN.get("id"),
             determinism_config=SCEN.get("determinism"),
         )
-
+        H.record_log(
+            level="info",
+            message=f"Processing input: {input_text}",
+        )
     except (KeyError, ValueError, FileNotFoundError) as e:
         struct_logger.error("application.startup.failed", error=str(e), exc_info=True)
         logger.error(f"Failed to start application: {str(e)}")
@@ -96,7 +113,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=os.environ.get("TITLE", "Zendesk Roleplay (LangGraph)"), lifespan=lifespan
 )
-
+app.add_middleware(FastAPIMiddleware)
 SESS_DIR = os.path.abspath("./sessions")
 os.makedirs(SESS_DIR, exist_ok=True)
 
@@ -149,10 +166,18 @@ def export_transcript(session_id: str, fmt: str = "jsonl"):
 
 def _provider_meta():
     return {
-        "provider": os.getenv("MODEL_PROVIDER", "openai"),
-        "model": os.getenv("MODEL_NAME", ""),
-        "timeout": float(os.getenv("LLM_REQUEST_TIMEOUT", "30")),
-        "max_output_tokens": int(os.getenv("MAX_OUTPUT_TOKENS", "512")),
+        "chat": {
+            "provider": os.environ["MODEL_PROVIDER"],
+            "chat_model": os.environ["MODEL_NAME"],
+            "timeout": float(os.getenv("LLM_REQUEST_TIMEOUT", "30")),
+            "max_output_tokens": int(os.getenv("MAX_OUTPUT_TOKENS", "512")),
+        },
+        "embedding": {
+            "provider": os.environ.get("EMBEDDING_PROVIDER", "none"),
+            "embedding_model": os.environ.get("EMBEDDING_MODEL", "none"),
+            "timeout": float(os.getenv("EMBEDDING_REQUEST_TIMEOUT", "30")),
+            "max_tokens": int(os.getenv("MAX_EMBEDDING_TOKENS", "8192")),
+        },
     }
 
 
@@ -248,6 +273,9 @@ class StartReq(BaseModel):
     )
 
 
+# Add rate limiting middleware
+app.middleware("http")(rate_limit_middleware)
+
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -260,44 +288,20 @@ app.add_middleware(
 # --- Enhanced Graph State ---
 
 
-class State(dict):
+class State(TypedDict, total=False):
     """Represents the state of a session during the conversation.
 
-    This class extends the dictionary to store session information such as
-    transcript, milestones, and timing with better type safety.
+    This class defines the schema for session state in LangGraph.
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Ensure default keys exist
-        self.setdefault("milestones", [])
-        self.setdefault("transcript", [])
-        self.setdefault("penalty", 0.0)
-        self.setdefault("started_at", time.time())
-
-    def get_session_id(self) -> str:
-        """Get session ID with validation."""
-        if session_id := self.get("session_id"):
-            return session_id
-        else:
-            raise ValueError("Session ID not found in state")
-
-    def add_milestone(self, milestone: str) -> None:
-        """Add milestone if not already present, preserving order."""
-        milestones = self.get("milestones", [])
-        if milestone not in milestones:
-            milestones.append(milestone)
-            self["milestones"] = milestones
-
-    def add_penalty(self, penalty: float) -> None:
-        """Add penalty to current total."""
-        self["penalty"] = self.get("penalty", 0.0) + penalty
-
-    def append_to_transcript(self, role: str, text: str) -> None:
-        """Add message to transcript."""
-        if "transcript" not in self:
-            self["transcript"] = []
-        self["transcript"].append({"role": role, "text": text})
+    session_id: str
+    transcript: list
+    milestones: list
+    penalty: float
+    started_at: float
+    last_user: str
+    last_bot: str
+    phase: str
 
 
 # --- Safe helpers that work even if LangGraph hands us a plain dict ---
@@ -341,9 +345,11 @@ async def reply_node_fn(state: State) -> State:
     Returns:
         State: The updated session state with the bot's reply and milestone changes.
     """
-    # Ensure we're working with proper State object
-    if not isinstance(state, State):
-        state = State(state)
+    # Ensure we have all required keys with defaults
+    state.setdefault("milestones", [])
+    state.setdefault("transcript", [])
+    state.setdefault("penalty", 0.0)
+    state.setdefault("started_at", time.time())
 
     session_id = state.get("session_id", "unknown")
     start_time = time.time()
@@ -364,7 +370,7 @@ async def reply_node_fn(state: State) -> State:
             fallback_message = "I'm ready when you are—what's the customer's message?"
             state["last_bot"] = fallback_message
             _append_transcript(state, "assistant", fallback_message)
-            return dict(state)
+            return state
 
         # Intent detection with timeout and error handling
         intent_start = time.time()
@@ -501,7 +507,7 @@ async def reply_node_fn(state: State) -> State:
             response_length=len(state["last_bot"]),
         )
 
-        return dict(state)
+        return state
 
     except Exception as e:
         struct_logger.error(
@@ -636,66 +642,70 @@ async def start(req: StartReq):
 
 
 @app.post("/reply")
-async def reply(msg: Msg):
+async def reply(request: Request):
     """Process user message and return assistant reply.
 
     Args:
-        msg (Msg): The user message and session ID.
+        request: Raw FastAPI request to be validated
 
     Returns:
         dict: Assistant reply, attachments, and milestones.
     """
+    # Validate and sanitize input
+    try:
+        request_data = await request.json()
+        validated_msg = validate_json_input(request_data, ChatRequestModel)
+        if not validated_msg:
+            raise HTTPException(status_code=400, detail="Invalid request format")
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON")
+
     struct_logger.info(
-        "message.reply.request", session_id=msg.session_id, message_length=len(msg.text)
+        "message.reply.request",
+        session_id=validated_msg.session_id,
+        message_length=len(validated_msg.message),
     )
 
     try:
         # CRITICAL FIX: Load existing session data instead of creating empty state
-        existing_session = get_session(msg.session_id)
+        existing_session = get_session(validated_msg.session_id)
         if not existing_session:
-            struct_logger.error("session.not_found", session_id=msg.session_id)
+            struct_logger.error(
+                "session.not_found", session_id=validated_msg.session_id
+            )
             raise HTTPException(status_code=404, detail="Session not found")
 
         # Create state with existing session data
-        state = State(
-            {
-                "session_id": msg.session_id,
-                "transcript": existing_session.get("transcript", []),
-                "milestones": existing_session.get("milestones", []),
-                "started_at": existing_session.get("started_at", time.time()),
-                "penalty": existing_session.get("penalty", 0.0),
-                "last_user": msg.text,
-            }
-        )
+        state: State = {
+            "session_id": validated_msg.session_id,
+            "transcript": existing_session.get("transcript", []),
+            "milestones": existing_session.get("milestones", []),
+            "started_at": existing_session.get("started_at", time.time()),
+            "penalty": existing_session.get("penalty", 0.0),
+            "last_user": validated_msg.message,
+        }
 
         struct_logger.debug(
             "session.loaded",
-            session_id=msg.session_id,
+            session_id=validated_msg.session_id,
             existing_milestones=len(state.get("milestones", [])),
             existing_transcript_length=len(state.get("transcript", [])),
         )
 
         # Log user turn
-        log_turn(msg.session_id, "user", msg.text)
+        log_turn(validated_msg.session_id, "user", validated_msg.message)
 
         # Process through graph
         graph_start = time.time()
-        if not msg.text.strip():
+        if not validated_msg.message.strip():
             return {
                 "message": "I'm ready when you are—what's the customer's message?",
                 "attachments": [],
                 "milestones": existing_session.get("milestones", []),
             }
-        state = State(
-            {
-                "session_id": msg.session_id,
-                "transcript": existing_session.get("transcript", []),
-                "milestones": existing_session.get("milestones", []),
-                "started_at": existing_session.get("started_at", time.time()),
-                "penalty": existing_session.get("penalty", 0.0),
-                "last_user": msg.text.strip(),  # <- ensure non-empty
-            }
-        )
+
+        # Use the properly loaded state with user message
+        state["last_user"] = validated_msg.message.strip()
 
         out: State = await graph.ainvoke(state)
         graph_duration = time.time() - graph_start
@@ -704,7 +714,7 @@ async def reply(msg: Msg):
             # graceful fallback path instead of 500
             struct_logger.error(
                 "graph.invalid_output",
-                session_id=msg.session_id,
+                session_id=validated_msg.session_id,
                 output_type=type(out).__name__ if out is not None else "NoneType",
             )
             out = dict(state)
@@ -716,7 +726,7 @@ async def reply(msg: Msg):
         if "last_bot" not in out:
             out["last_bot"] = "I'm ready when you are—what's the customer's message?"
             struct_logger.warning(
-                "message.reply.fallback_response", session_id=msg.session_id
+                "message.reply.fallback_response", session_id=validated_msg.session_id
             )
 
         # CRITICAL FIX: Save updated session state back to storage
@@ -738,15 +748,17 @@ async def reply(msg: Msg):
                 "last_bot": out.get("last_bot", ""),
             }
 
-            update_success = update_session(msg.session_id, updated_session_data)
+            update_success = update_session(
+                validated_msg.session_id, updated_session_data
+            )
             if not update_success:
                 struct_logger.warning(
-                    "session.update_failed", session_id=msg.session_id
+                    "session.update_failed", session_id=validated_msg.session_id
                 )
 
             struct_logger.debug(
                 "session.updated",
-                session_id=msg.session_id,
+                session_id=validated_msg.session_id,
                 milestones_count=len(out.get("milestones", [])),
                 transcript_length=len(out.get("transcript", [])),
             )
@@ -756,19 +768,21 @@ async def reply(msg: Msg):
                 existing_session.get("milestones", [])
             )
             for milestone in new_milestones:
-                add_milestone(msg.session_id, milestone, len(out.get("transcript", [])))
+                add_milestone(
+                    validated_msg.session_id, milestone, len(out.get("transcript", []))
+                )
 
         except Exception as storage_error:
             struct_logger.error(
                 "session.update_failed",
-                session_id=msg.session_id,
+                session_id=validated_msg.session_id,
                 error=str(storage_error),
                 exc_info=True,
             )
             # Continue processing but log the issue
 
         # Log bot turn
-        log_turn(msg.session_id, "bot", out["last_bot"])
+        log_turn(validated_msg.session_id, "bot", out["last_bot"])
 
         # Prepare attachments
         attachments = []
@@ -780,7 +794,7 @@ async def reply(msg: Msg):
 
         struct_logger.info(
             "message.reply.success",
-            session_id=msg.session_id,
+            session_id=validated_msg.session_id,
             graph_duration_ms=round(graph_duration * 1000, 2),
             milestones=out.get("milestones", []),
             attachments_count=len(attachments),
@@ -789,9 +803,9 @@ async def reply(msg: Msg):
 
         # Persist a complete snapshot to JSONL for export/restore
         save_session(
-            msg.session_id,
+            validated_msg.session_id,
             {
-                "session_id": msg.session_id,
+                "session_id": validated_msg.session_id,
                 "started_at": updated_session_data["started_at"],
                 "transcript": out.get("transcript", []),
                 "milestones": out.get("milestones", []),
@@ -812,7 +826,7 @@ async def reply(msg: Msg):
     except Exception as e:
         struct_logger.error(
             "message.reply.error",
-            session_id=msg.session_id,
+            session_id=validated_msg.session_id,
             error=str(e),
             exc_info=True,
         )

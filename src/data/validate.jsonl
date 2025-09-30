@@ -1,0 +1,122 @@
+{"phrase": "Could you please provide the logs related to this issue?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the HAR files to investigate further.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you send over the log files?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please share the logs so I can check what went wrong.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Do you have the HAR data available?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you upload the logs for analysis?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I require the logs to proceed with troubleshooting.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please provide the HAR export from your browser.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you send the relevant log files?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Would you mind sharing the HAR logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the logs to understand the problem better.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you get me the HAR files, please?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please send the logs so I can look into the issue.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you provide the HAR capture?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I’d like to see the logs to diagnose this.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you share the HAR logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please upload the log files for review.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the HAR data to continue.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Would you send the logs, please?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you provide the relevant logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please share the HAR files with me.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you send the logs for further analysis?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I require the HAR export to move forward.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please give me the log files.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you upload the HAR logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I’d appreciate the logs to investigate.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you provide the logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please send the HAR data.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you share the logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the log files to help you.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "What is your goal with this task?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you explain what you want to achieve?", "intents": ["ask_for_goal"]}
+{"phrase": "Please tell me your objective.", "intents": ["ask_for_goal"]}
+{"phrase": "What’s the goal you’re trying to reach?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you share the intended outcome?", "intents": ["ask_for_goal"]}
+{"phrase": "What result are you aiming for?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you clarify your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "Please describe what you want to accomplish.", "intents": ["ask_for_goal"]}
+{"phrase": "What’s the end goal here?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you tell me your purpose?", "intents": ["ask_for_goal"]}
+{"phrase": "What are you trying to achieve?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you state your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "Please share your objective.", "intents": ["ask_for_goal"]}
+{"phrase": "What’s your intended goal?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you explain the aim?", "intents": ["ask_for_goal"]}
+{"phrase": "What is the target outcome?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you let me know your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "Please tell me the result you want.", "intents": ["ask_for_goal"]}
+{"phrase": "What’s the main objective?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you describe your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "What goal are you working towards?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you share your aim?", "intents": ["ask_for_goal"]}
+{"phrase": "Please explain what you want to do.", "intents": ["ask_for_goal"]}
+{"phrase": "What outcome do you expect?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you tell me your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "What are you hoping to achieve?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you specify your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "Please state your objective.", "intents": ["ask_for_goal"]}
+{"phrase": "What’s your desired result?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you share your target?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you provide the reproduction steps?", "intents": ["ask_for_repro"]}
+{"phrase": "Please give me the steps to reproduce the issue.", "intents": ["ask_for_repro"]}
+{"phrase": "How can I replicate the problem?", "intents": ["ask_for_repro"]}
+{"phrase": "Can you describe how to reproduce this bug?", "intents": ["ask_for_repro"]}
+{"phrase": "What are the reproduction steps?", "intents": ["ask_for_repro"]}
+{"phrase": "Please share the exact steps to reproduce.", "intents": ["ask_for_repro"]}
+{"phrase": "Could you tell me how to reproduce the issue?", "intents": ["ask_for_repro"]}
+{"phrase": "I need the reproduction process.", "intents": ["ask_for_repro"]}
+{"phrase": "Can you provide the steps to replicate?", "intents": ["ask_for_repro"]}
+{"phrase": "How do I reproduce this problem?", "intents": ["ask_for_repro"]}
+{"phrase": "Please describe the repro steps.", "intents": ["ask_for_repro"]}
+{"phrase": "Could you share the reproduction instructions?", "intents": ["ask_for_repro"]}
+{"phrase": "What steps do I need to follow to reproduce?", "intents": ["ask_for_repro"]}
+{"phrase": "Can you explain how to reproduce the bug?", "intents": ["ask_for_repro"]}
+{"phrase": "Please provide the reproduction steps.", "intents": ["ask_for_repro"]}
+{"phrase": "How can I reproduce this issue?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you give me the repro steps?", "intents": ["ask_for_repro"]}
+{"phrase": "Please tell me how to replicate the bug.", "intents": ["ask_for_repro"]}
+{"phrase": "What’s the process to reproduce?", "intents": ["ask_for_repro"]}
+{"phrase": "Can you detail the reproduction steps?", "intents": ["ask_for_repro"]}
+{"phrase": "How do I replicate the issue?", "intents": ["ask_for_repro"]}
+{"phrase": "Please share how to reproduce this.", "intents": ["ask_for_repro"]}
+{"phrase": "How Did it Start", "intents": ["ask_for_repro"]}
+{"phrase": "Could you provide reproduction instructions?", "intents": ["ask_for_repro"]}
+{"phrase": "What are the exact steps to reproduce?", "intents": ["ask_for_repro"]}
+{"phrase": "Can you describe the process to reproduce?", "intents": ["ask_for_repro"]}
+{"phrase": "Please give me the steps for replication.", "intents": ["ask_for_repro"]}
+{"phrase": "How can I replicate the bug?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you explain the reproduction steps?", "intents": ["ask_for_repro"]}
+{"phrase": "I need the exact reproduction procedure.", "intents": ["ask_for_repro"]}
+{"phrase": "What steps do I follow to reproduce?", "intents": ["ask_for_repro"]}
+{"phrase": "Can you share the reproduction method?", "intents": ["ask_for_repro"]}
+{"phrase": "Please provide instructions to reproduce.", "intents": ["ask_for_repro"]}
+{"phrase": "What context can you share about the issue?", "intents": ["ask_for_context"]}
+{"phrase": "Could you give me more background information?", "intents": ["ask_for_context"]}
+{"phrase": "Please provide additional context.", "intents": ["ask_for_context"]}
+{"phrase": "Can you share the environment details?", "intents": ["ask_for_context"]}
+{"phrase": "What’s the context around this problem?", "intents": ["ask_for_context"]}
+{"phrase": "Could you explain the circumstances?", "intents": ["ask_for_context"]}
+{"phrase": "Please tell me more about the situation.", "intents": ["ask_for_context"]}
+{"phrase": "Can you provide the context for this issue?", "intents": ["ask_for_context"]}
+{"phrase": "What environment are you running this in?", "intents": ["ask_for_context"]}
+{"phrase": "Could you share relevant details about the setup?", "intents": ["ask_for_context"]}
+{"phrase": "Please give me context to understand better.", "intents": ["ask_for_context"]}
+{"phrase": "Can you describe the conditions when this happens?", "intents": ["ask_for_context"]}
+{"phrase": "What’s the background for this issue?", "intents": ["ask_for_context"]}
+{"phrase": "Could you provide more info about the environment?", "intents": ["ask_for_context"]}
+{"phrase": "Please share any relevant context.", "intents": ["ask_for_context"]}
+{"phrase": "Can you explain the scenario?", "intents": ["ask_for_context"]}
+{"phrase": "What are the details surrounding this problem?", "intents": ["ask_for_context"]}
+{"phrase": "Could you give me the context details?", "intents": ["ask_for_context"]}
+{"phrase": "Please provide environment specifics.", "intents": ["ask_for_context"]}
+{"phrase": "Can you share more about the conditions?", "intents": ["ask_for_context"]}
+{"phrase": "What context can you add?", "intents": ["ask_for_context"]}
+{"phrase": "Could you describe the setup?", "intents": ["ask_for_context"]}
+{"phrase": "Please tell me about the environment.", "intents": ["ask_for_context"]}
+{"phrase": "Can you provide background info?", "intents": ["ask_for_context"]}
+{"phrase": "What’s the situation when this occurs?", "intents": ["ask_for_context"]}
+{"phrase": "Could you share details about your environment?", "intents": ["ask_for_context"]}
+{"phrase": "Please provide any additional context.", "intents": ["ask_for_context"]}
+{"phrase": "Can you explain the background?", "intents": ["ask_for_context"]}
+{"phrase": "What details can you share about the issue?", "intents": ["ask_for_context"]}

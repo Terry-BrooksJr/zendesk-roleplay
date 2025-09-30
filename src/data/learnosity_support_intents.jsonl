@@ -1,0 +1,333 @@
+{"phrase": "Could you please provide the logs related to this issue?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the HAR files to investigate further.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you send over the log files?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please share the logs so I can check what went wrong.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Do you have the HAR data available?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you upload the logs for analysis?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I require the logs to proceed with troubleshooting.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please provide the HAR export from your browser.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you send the relevant log files?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Would you mind sharing the HAR logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the logs to understand the problem better.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you get me the HAR files, please?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please send the logs so I can look into the issue.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you provide the HAR capture?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I'd like to see the logs to diagnose this.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you share the HAR logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please upload the log files for review.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the HAR data to continue.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Would you send the logs, please?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you provide the relevant logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please share the HAR files with me.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you send the logs for further analysis?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I require the HAR export to move forward.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please give me the log files.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you upload the HAR logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I'd appreciate the logs to investigate.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you provide the logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please send the HAR data.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you share the logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the log files to help you.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "What is your goal with this task?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you explain what you want to achieve?", "intents": ["ask_for_goal"]}
+{"phrase": "Please tell me your objective.", "intents": ["ask_for_goal"]}
+{"phrase": "What's the goal you're trying to reach?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you share the intended outcome?", "intents": ["ask_for_goal"]}
+{"phrase": "What result are you aiming for?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you clarify your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "Please describe what you want to accomplish.", "intents": ["ask_for_goal"]}
+{"phrase": "What's the end goal here?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you tell me your purpose?", "intents": ["ask_for_goal"]}
+{"phrase": "What are you trying to achieve?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you state your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "Please share your objective.", "intents": ["ask_for_goal"]}
+{"phrase": "What's your intended goal?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you explain the aim?", "intents": ["ask_for_goal"]}
+{"phrase": "What is the target outcome?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you let me know your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "Please tell me the result you want.", "intents": ["ask_for_goal"]}
+{"phrase": "What's the main objective?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you describe your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "What goal are you working towards?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you share your aim?", "intents": ["ask_for_goal"]}
+{"phrase": "Please explain what you want to do.", "intents": ["ask_for_goal"]}
+{"phrase": "What outcome do you expect?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you tell me your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "What are you hoping to achieve?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you specify your goal?", "intents": ["ask_for_goal"]}
+{"phrase": "Please state your objective.", "intents": ["ask_for_goal"]}
+{"phrase": "What's your desired result?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you share your target?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you provide the reproduction steps?", "intents": ["ask_for_repro"]}
+{"phrase": "Please give me the steps to reproduce the issue.", "intents": ["ask_for_repro"]}
+{"phrase": "How can I replicate the problem?", "intents": ["ask_for_repro"]}
+{"phrase": "Can you describe how to reproduce this bug?", "intents": ["ask_for_repro"]}
+{"phrase": "What are the reproduction steps?", "intents": ["ask_for_repro"]}
+{"phrase": "Please share the exact steps to reproduce.", "intents": ["ask_for_repro"]}
+{"phrase": "Could you tell me how to reproduce the issue?", "intents": ["ask_for_repro"]}
+{"phrase": "I need the reproduction process.", "intents": ["ask_for_repro"]}
+{"phrase": "Can you provide the steps to replicate?", "intents": ["ask_for_repro"]}
+{"phrase": "How do I reproduce this problem?", "intents": ["ask_for_repro"]}
+{"phrase": "Please describe the repro steps.", "intents": ["ask_for_repro"]}
+{"phrase": "Could you share the reproduction instructions?", "intents": ["ask_for_repro"]}
+{"phrase": "What steps do I need to follow to reproduce?", "intents": ["ask_for_repro"]}
+{"phrase": "Can you explain how to reproduce the bug?", "intents": ["ask_for_repro"]}
+{"phrase": "Please provide the reproduction steps.", "intents": ["ask_for_repro"]}
+{"phrase": "How can I reproduce this issue?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you give me the repro steps?", "intents": ["ask_for_repro"]}
+{"phrase": "Please tell me how to replicate the bug.", "intents": ["ask_for_repro"]}
+{"phrase": "What's the process to reproduce?", "intents": ["ask_for_repro"]}
+{"phrase": "Can you detail the reproduction steps?", "intents": ["ask_for_repro"]}
+{"phrase": "How do I replicate the issue?", "intents": ["ask_for_repro"]}
+{"phrase": "Please share how to reproduce this.", "intents": ["ask_for_repro"]}
+{"phrase": "How Did it Start", "intents": ["ask_for_repro"]}
+{"phrase": "Could you provide reproduction instructions?", "intents": ["ask_for_repro"]}
+{"phrase": "What are the exact steps to reproduce?", "intents": ["ask_for_repro"]}
+{"phrase": "Can you describe the process to reproduce?", "intents": ["ask_for_repro"]}
+{"phrase": "Please give me the steps for replication.", "intents": ["ask_for_repro"]}
+{"phrase": "How can I replicate the bug?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you explain the reproduction steps?", "intents": ["ask_for_repro"]}
+{"phrase": "I need the exact reproduction procedure.", "intents": ["ask_for_repro"]}
+{"phrase": "What steps do I follow to reproduce?", "intents": ["ask_for_repro"]}
+{"phrase": "Can you share the reproduction method?", "intents": ["ask_for_repro"]}
+{"phrase": "Please provide instructions to reproduce.", "intents": ["ask_for_repro"]}
+{"phrase": "What context can you share about the issue?", "intents": ["ask_for_context"]}
+{"phrase": "Could you give me more background information?", "intents": ["ask_for_context"]}
+{"phrase": "Please provide additional context.", "intents": ["ask_for_context"]}
+{"phrase": "Can you share the environment details?", "intents": ["ask_for_context"]}
+{"phrase": "What's the context around this problem?", "intents": ["ask_for_context"]}
+{"phrase": "Could you explain the circumstances?", "intents": ["ask_for_context"]}
+{"phrase": "Please tell me more about the situation.", "intents": ["ask_for_context"]}
+{"phrase": "Can you provide the context for this issue?", "intents": ["ask_for_context"]}
+{"phrase": "What environment are you running this in?", "intents": ["ask_for_context"]}
+{"phrase": "Could you share relevant details about the setup?", "intents": ["ask_for_context"]}
+{"phrase": "Please give me context to understand better.", "intents": ["ask_for_context"]}
+{"phrase": "Can you describe the conditions when this happens?", "intents": ["ask_for_context"]}
+{"phrase": "What's the background for this issue?", "intents": ["ask_for_context"]}
+{"phrase": "Could you provide more info about the environment?", "intents": ["ask_for_context"]}
+{"phrase": "Please share any relevant context.", "intents": ["ask_for_context"]}
+{"phrase": "Can you explain the scenario?", "intents": ["ask_for_context"]}
+{"phrase": "What are the details surrounding this problem?", "intents": ["ask_for_context"]}
+{"phrase": "Could you give me the context details?", "intents": ["ask_for_context"]}
+{"phrase": "Please provide environment specifics.", "intents": ["ask_for_context"]}
+{"phrase": "Can you share more about the conditions?", "intents": ["ask_for_context"]}
+{"phrase": "What context can you add?", "intents": ["ask_for_context"]}
+{"phrase": "Could you describe the setup?", "intents": ["ask_for_context"]}
+{"phrase": "Please tell me about the environment.", "intents": ["ask_for_context"]}
+{"phrase": "Can you provide background info?", "intents": ["ask_for_context"]}
+{"phrase": "What's the situation when this occurs?", "intents": ["ask_for_context"]}
+{"phrase": "Could you share details about your environment?", "intents": ["ask_for_context"]}
+{"phrase": "Please provide any additional context.", "intents": ["ask_for_context"]}
+{"phrase": "Can you explain the background?", "intents": ["ask_for_context"]}
+{"phrase": "What details can you share about the issue?", "intents": ["ask_for_context"]}
+{"phrase": "I'll need to examine the application logs first.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Let me check the error logs to understand this better.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you extract the browser's network logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please generate a HAR file from the session.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need to review the system logs for this error.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you capture the console output when this happens?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please share the server logs from that timeframe.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you download the debug logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the transaction logs to investigate.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you provide the application's error logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please send over the network trace data.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you collect the browser console logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need access to the audit logs.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you export the diagnostic logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please gather the performance logs.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you pull the security logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the database query logs.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you provide the API request logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please share the authentication logs.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you send the session logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Help me understand your business requirements.", "intents": ["ask_for_goal"]}
+{"phrase": "What's the desired user experience?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you outline your success criteria?", "intents": ["ask_for_goal"]}
+{"phrase": "What business problem are we solving?", "intents": ["ask_for_goal"]}
+{"phrase": "Please describe your vision for this feature.", "intents": ["ask_for_goal"]}
+{"phrase": "What's the expected behavior you want?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you define the acceptance criteria?", "intents": ["ask_for_goal"]}
+{"phrase": "What's the functional requirement here?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you clarify the business case?", "intents": ["ask_for_goal"]}
+{"phrase": "What problem does this solve for users?", "intents": ["ask_for_goal"]}
+{"phrase": "Please explain the use case scenario.", "intents": ["ask_for_goal"]}
+{"phrase": "What's the target user workflow?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you describe the ideal solution?", "intents": ["ask_for_goal"]}
+{"phrase": "What's the strategic objective?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you outline the requirements?", "intents": ["ask_for_goal"]}
+{"phrase": "What value are we trying to deliver?", "intents": ["ask_for_goal"]}
+{"phrase": "Please define what success looks like.", "intents": ["ask_for_goal"]}
+{"phrase": "What's the primary use case?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you explain the business need?", "intents": ["ask_for_goal"]}
+{"phrase": "What outcome should users experience?", "intents": ["ask_for_goal"]}
+{"phrase": "Walk me through the exact sequence of events.", "intents": ["ask_for_repro"]}
+{"phrase": "Can you break down each action you took?", "intents": ["ask_for_repro"]}
+{"phrase": "Please detail the step-by-step process.", "intents": ["ask_for_repro"]}
+{"phrase": "What's the exact workflow that triggers this?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you document the reproduction path?", "intents": ["ask_for_repro"]}
+{"phrase": "I need the precise steps in order.", "intents": ["ask_for_repro"]}
+{"phrase": "Can you trace through the user journey?", "intents": ["ask_for_repro"]}
+{"phrase": "Please outline the test case steps.", "intents": ["ask_for_repro"]}
+{"phrase": "What's the exact click sequence?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you map out the reproduction workflow?", "intents": ["ask_for_repro"]}
+{"phrase": "I need the chronological sequence of actions.", "intents": ["ask_for_repro"]}
+{"phrase": "Can you provide a detailed walkthrough?", "intents": ["ask_for_repro"]}
+{"phrase": "Please recreate the scenario step by step.", "intents": ["ask_for_repro"]}
+{"phrase": "What's the exact procedure to follow?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you document the reproduction recipe?", "intents": ["ask_for_repro"]}
+{"phrase": "I need the systematic approach to reproduce.", "intents": ["ask_for_repro"]}
+{"phrase": "Can you provide the test scenario steps?", "intents": ["ask_for_repro"]}
+{"phrase": "Please describe the reproduction methodology.", "intents": ["ask_for_repro"]}
+{"phrase": "What's the step-by-step guide?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you outline the reproduction protocol?", "intents": ["ask_for_repro"]}
+{"phrase": "What browser and version are you using?", "intents": ["ask_for_context"]}
+{"phrase": "Could you share your system specifications?", "intents": ["ask_for_context"]}
+{"phrase": "Please provide your operating system details.", "intents": ["ask_for_context"]}
+{"phrase": "What's your current software configuration?", "intents": ["ask_for_context"]}
+{"phrase": "Can you describe your network environment?", "intents": ["ask_for_context"]}
+{"phrase": "What time did this issue first appear?", "intents": ["ask_for_context"]}
+{"phrase": "Could you share the application version?", "intents": ["ask_for_context"]}
+{"phrase": "Please tell me about your device specifications.", "intents": ["ask_for_context"]}
+{"phrase": "What's the frequency of this occurrence?", "intents": ["ask_for_context"]}
+{"phrase": "Can you describe your user permissions?", "intents": ["ask_for_context"]}
+{"phrase": "What geographic region are you in?", "intents": ["ask_for_context"]}
+{"phrase": "Could you provide your account details?", "intents": ["ask_for_context"]}
+{"phrase": "Please share the integration settings.", "intents": ["ask_for_context"]}
+{"phrase": "What's your current deployment environment?", "intents": ["ask_for_context"]}
+{"phrase": "Can you describe the data volume involved?", "intents": ["ask_for_context"]}
+{"phrase": "What security settings are configured?", "intents": ["ask_for_context"]}
+{"phrase": "Could you share the infrastructure details?", "intents": ["ask_for_context"]}
+{"phrase": "Please describe your user role and access.", "intents": ["ask_for_context"]}
+{"phrase": "What's the scale of your implementation?", "intents": ["ask_for_context"]}
+{"phrase": "Can you provide the technical architecture details?", "intents": ["ask_for_context"]}
+{"phrase": "Before we implement the fix, I need to see the error logs and understand what you're trying to achieve.", "intents": ["ask_for_diagnostic_data", "ask_for_goal"]}
+{"phrase": "To troubleshoot this properly, can you share the HAR files and walk me through the exact steps to reproduce?", "intents": ["ask_for_diagnostic_data", "ask_for_repro"]}
+{"phrase": "Please provide the logs and tell me more about your environment setup so I can understand the context.", "intents": ["ask_for_diagnostic_data", "ask_for_context"]}
+{"phrase": "What's your goal with this feature, and can you share the reproduction steps?", "intents": ["ask_for_goal", "ask_for_repro"]}
+{"phrase": "Help me understand your objective and provide more context about your current implementation.", "intents": ["ask_for_goal", "ask_for_context"]}
+{"phrase": "Can you walk me through the reproduction steps and describe your deployment environment?", "intents": ["ask_for_repro", "ask_for_context"]}
+{"phrase": "I need the error logs, reproduction steps, and details about your Learnosity configuration to help.", "intents": ["ask_for_diagnostic_data", "ask_for_repro", "ask_for_context"]}
+{"phrase": "To provide the best solution, please share your logs, explain your goals, and describe your setup.", "intents": ["ask_for_diagnostic_data", "ask_for_goal", "ask_for_context"]}
+{"phrase": "Can you provide the HAR data, clarify what you're trying to accomplish, and give me the steps to reproduce?", "intents": ["ask_for_diagnostic_data", "ask_for_goal", "ask_for_repro"]}
+{"phrase": "Please share your objective, the reproduction steps, and details about your current environment.", "intents": ["ask_for_goal", "ask_for_repro", "ask_for_context"]}
+{"phrase": "I need comprehensive information: logs, your goals, reproduction steps, and environment details to diagnose this properly.", "intents": ["ask_for_diagnostic_data", "ask_for_goal", "ask_for_repro", "ask_for_context"]}
+{"phrase": "I'll need to examine the network trace to understand the issue.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you export the browser's developer console output?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please capture the API response logs during the error.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you generate a performance profiling trace?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the server-side error logs from that timeframe.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you provide the database query execution logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please share the authentication service logs.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you collect the load balancer access logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the application startup logs for analysis.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you extract the memory dump when this occurs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please provide the stack trace from the exception.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you share the audit trail logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the webhook delivery logs.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you capture the WebSocket connection logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please send the caching layer debug output.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you provide the CDN access logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "I need the message queue processing logs.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Can you export the SSL certificate validation logs?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Please gather the third-party integration logs.", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Could you collect the microservice communication traces?", "intents": ["ask_for_diagnostic_data"]}
+{"phrase": "Help me understand your business requirements for this feature.", "intents": ["ask_for_goal"]}
+{"phrase": "What's the primary use case you're trying to enable?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you describe the expected user workflow?", "intents": ["ask_for_goal"]}
+{"phrase": "What business value should this deliver?", "intents": ["ask_for_goal"]}
+{"phrase": "Please outline your acceptance criteria.", "intents": ["ask_for_goal"]}
+{"phrase": "What's the target user experience?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you define the success metrics?", "intents": ["ask_for_goal"]}
+{"phrase": "What problem are we solving for your customers?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you clarify the functional requirements?", "intents": ["ask_for_goal"]}
+{"phrase": "What's the strategic objective behind this?", "intents": ["ask_for_goal"]}
+{"phrase": "Please describe the ideal solution architecture.", "intents": ["ask_for_goal"]}
+{"phrase": "What compliance requirements must we meet?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you explain the performance expectations?", "intents": ["ask_for_goal"]}
+{"phrase": "What's the scope of this implementation?", "intents": ["ask_for_goal"]}
+{"phrase": "Could you outline the integration requirements?", "intents": ["ask_for_goal"]}
+{"phrase": "What's the expected scalability needs?", "intents": ["ask_for_goal"]}
+{"phrase": "Please define the security requirements.", "intents": ["ask_for_goal"]}
+{"phrase": "What's the target go-live timeline?", "intents": ["ask_for_goal"]}
+{"phrase": "Can you describe the rollback strategy needed?", "intents": ["ask_for_goal"]}
+{"phrase": "What's the disaster recovery expectation?", "intents": ["ask_for_goal"]}
+{"phrase": "Walk me through the exact user actions step by step.", "intents": ["ask_for_repro"]}
+{"phrase": "Can you document the precise click sequence?", "intents": ["ask_for_repro"]}
+{"phrase": "Please detail the API calls in chronological order.", "intents": ["ask_for_repro"]}
+{"phrase": "What's the exact data input that triggers this?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you trace the complete user journey?", "intents": ["ask_for_repro"]}
+{"phrase": "I need the systematic test case procedure.", "intents": ["ask_for_repro"]}
+{"phrase": "Can you break down the workflow into discrete steps?", "intents": ["ask_for_repro"]}
+{"phrase": "Please provide the reproducible test scenario.", "intents": ["ask_for_repro"]}
+{"phrase": "What's the minimal set of actions to trigger this?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you outline the reproduction methodology?", "intents": ["ask_for_repro"]}
+{"phrase": "I need the step-by-step recreation guide.", "intents": ["ask_for_repro"]}
+{"phrase": "Can you document the exact browser interactions?", "intents": ["ask_for_repro"]}
+{"phrase": "Please describe the data setup requirements.", "intents": ["ask_for_repro"]}
+{"phrase": "What's the prerequisite state before reproduction?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you provide the automation script equivalent?", "intents": ["ask_for_repro"]}
+{"phrase": "I need the detailed reproduction protocol.", "intents": ["ask_for_repro"]}
+{"phrase": "Can you map out the complete interaction flow?", "intents": ["ask_for_repro"]}
+{"phrase": "Please specify the timing between each action.", "intents": ["ask_for_repro"]}
+{"phrase": "What's the exact sequence of form submissions?", "intents": ["ask_for_repro"]}
+{"phrase": "Could you detail the navigation path taken?", "intents": ["ask_for_repro"]}
+{"phrase": "What's your current deployment architecture?", "intents": ["ask_for_context"]}
+{"phrase": "Could you describe your infrastructure setup?", "intents": ["ask_for_context"]}
+{"phrase": "Please share your technology stack details.", "intents": ["ask_for_context"]}
+{"phrase": "What's the load pattern during peak hours?", "intents": ["ask_for_context"]}
+{"phrase": "Can you describe your data volume characteristics?", "intents": ["ask_for_context"]}
+{"phrase": "What third-party services are integrated?", "intents": ["ask_for_context"]}
+{"phrase": "Could you provide your security configuration?", "intents": ["ask_for_context"]}
+{"phrase": "Please describe the user access patterns.", "intents": ["ask_for_context"]}
+{"phrase": "What's your current monitoring setup?", "intents": ["ask_for_context"]}
+{"phrase": "Can you share the geographic distribution?", "intents": ["ask_for_context"]}
+{"phrase": "What's the typical user session duration?", "intents": ["ask_for_context"]}
+{"phrase": "Could you describe your backup and recovery setup?", "intents": ["ask_for_context"]}
+{"phrase": "Please provide the network topology details.", "intents": ["ask_for_context"]}
+{"phrase": "What's your current database configuration?", "intents": ["ask_for_context"]}
+{"phrase": "Can you describe your caching strategy?", "intents": ["ask_for_context"]}
+{"phrase": "What's the current API rate limiting setup?", "intents": ["ask_for_context"]}
+{"phrase": "Could you share your CI/CD pipeline details?", "intents": ["ask_for_context"]}
+{"phrase": "Please describe your testing environment setup.", "intents": ["ask_for_context"]}
+{"phrase": "What's your current scaling mechanism?", "intents": ["ask_for_context"]}
+{"phrase": "Can you provide your disaster recovery metrics?", "intents": ["ask_for_context"]}
+{"phrase": "Our Learnosity implementation uses the PHP SDK with custom session management.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "The Items API is initialized with dynamic item selection based on user proficiency.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "We've implemented custom scoring algorithms that override Learnosity's default scoring.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "The Reports API integration includes real-time analytics dashboard updates.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "Our security implementation rotates consumer secrets on a monthly basis.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "We use Learnosity's Events API to trigger custom learning path adaptations.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "The Question Editor API is embedded within our content management system.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "Our implementation includes custom question types built with the Author API.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "We've configured white-labeling to match our institutional branding requirements.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "The Data API integration syncs assessment results to our student information system.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "Our Learnosity setup includes multi-tenant configuration for different client organizations.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "We implement custom proctoring integration alongside Learnosity's assessment engine.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "The item bank synchronization happens via scheduled Data API batch operations.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "Our Reports API implementation includes custom export formats for compliance reporting.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "We use Learnosity's Analytics API for predictive modeling of student performance.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "The platform integrates Learnosity with our single sign-on authentication system.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "Our implementation includes custom accessibility features beyond Learnosity's defaults.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "We've built a custom item preview system using the Author API preview functionality.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "The assessment delivery uses adaptive algorithms that adjust difficulty in real-time.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "Our Learnosity integration includes custom webhook handlers for real-time event processing.", "intents": ["confirm_learnosity_implementation_details"]}
+{"phrase": "Configure the webhook endpoint to handle Learnosity event callbacks properly.", "intents": ["propose_fix"]}
+{"phrase": "Implement retry logic for failed API calls with exponential backoff.", "intents": ["propose_fix"]}
+{"phrase": "Add input validation before sending data to Learnosity APIs.", "intents": ["propose_fix"]}
+{"phrase": "Cache frequently accessed item metadata to reduce API calls.", "intents": ["propose_fix"]}
+{"phrase": "Implement circuit breaker pattern for Learnosity service calls.", "intents": ["propose_fix"]}
+{"phrase": "Add comprehensive logging for all Learnosity API interactions.", "intents": ["propose_fix"]}
+{"phrase": "Implement graceful degradation when Learnosity services are unavailable.", "intents": ["propose_fix"]}
+{"phrase": "Add health checks for all Learnosity service dependencies.", "intents": ["propose_fix"]}
+{"phrase": "Configure proper timeout values for Learnosity API requests.", "intents": ["propose_fix"]}
+{"phrase": "Implement rate limiting to respect Learnosity API quotas.", "intents": ["propose_fix"]}
+{"phrase": "Add monitoring and alerting for Learnosity service degradation.", "intents": ["propose_fix"]}
+{"phrase": "Implement proper error handling for Learnosity authentication failures.", "intents": ["propose_fix"]}
+{"phrase": "Configure load balancing for multiple Learnosity region endpoints.", "intents": ["propose_fix"]}
+{"phrase": "Add database connection pooling for improved performance.", "intents": ["propose_fix"]}
+{"phrase": "Implement async processing for non-critical Learnosity operations.", "intents": ["propose_fix"]}
+{"phrase": "Configure CDN caching for static Learnosity assets.", "intents": ["propose_fix"]}
+{"phrase": "Add request/response compression for Learnosity API calls.", "intents": ["propose_fix"]}
+{"phrase": "Implement proper session management for concurrent users.", "intents": ["propose_fix"]}
+{"phrase": "Configure horizontal scaling for high-traffic scenarios.", "intents": ["propose_fix"]}
+{"phrase": "Add performance monitoring for Learnosity integration points.", "intents": ["propose_fix"]}

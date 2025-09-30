@@ -1,0 +1,200 @@
+#!//Users/terry-brooks./.pyenv/shims/python
+
+
+import json
+import os
+import pathlib
+import re
+
+string = '''
+{"phrase": "I'll need to examine the network trace to understand the issue.", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Can you export the browser's developer console output?", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Please capture the API response logs during the error.", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Could you generate a performance profiling trace?", "intents": "ask_for_diagnostic_data"}
+{"phrase": "I need the server-side error logs from that timeframe.", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Can you provide the database query execution logs?", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Please share the authentication service logs.", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Could you collect the load balancer access logs?", "intents": "ask_for_diagnostic_data"}
+{"phrase": "I need the application startup logs for analysis.", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Can you extract the memory dump when this occurs?", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Please provide the stack trace from the exception.", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Could you share the audit trail logs?", "intents": "ask_for_diagnostic_data"}
+{"phrase": "I need the webhook delivery logs.", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Can you capture the WebSocket connection logs?", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Please send the caching layer debug output.", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Could you provide the CDN access logs?", "intents": "ask_for_diagnostic_data"}
+{"phrase": "I need the message queue processing logs.", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Can you export the SSL certificate validation logs?", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Please gather the third-party integration logs.", "intents": "ask_for_diagnostic_data"}
+{"phrase": "Could you collect the microservice communication traces?", "intents": "ask_for_diagnostic_data"}
+
+{"phrase": "Help me understand your business requirements for this feature.", "intents": "ask_for_goal"}
+{"phrase": "What's the primary use case you're trying to enable?", "intents": "ask_for_goal"}
+{"phrase": "Could you describe the expected user workflow?", "intents": "ask_for_goal"}
+{"phrase": "What business value should this deliver?", "intents": "ask_for_goal"}
+{"phrase": "Please outline your acceptance criteria.", "intents": "ask_for_goal"}
+{"phrase": "What's the target user experience?", "intents": "ask_for_goal"}
+{"phrase": "Can you define the success metrics?", "intents": "ask_for_goal"}
+{"phrase": "What problem are we solving for your customers?", "intents": "ask_for_goal"}
+{"phrase": "Could you clarify the functional requirements?", "intents": "ask_for_goal"}
+{"phrase": "What's the strategic objective behind this?", "intents": "ask_for_goal"}
+{"phrase": "Please describe the ideal solution architecture.", "intents": "ask_for_goal"}
+{"phrase": "What compliance requirements must we meet?", "intents": "ask_for_goal"}
+{"phrase": "Can you explain the performance expectations?", "intents": "ask_for_goal"}
+{"phrase": "What's the scope of this implementation?", "intents": "ask_for_goal"}
+{"phrase": "Could you outline the integration requirements?", "intents": "ask_for_goal"}
+{"phrase": "What's the expected scalability needs?", "intents": "ask_for_goal"}
+{"phrase": "Please define the security requirements.", "intents": "ask_for_goal"}
+{"phrase": "What's the target go-live timeline?", "intents": "ask_for_goal"}
+{"phrase": "Can you describe the rollback strategy needed?", "intents": "ask_for_goal"}
+{"phrase": "What's the disaster recovery expectation?", "intents": "ask_for_goal"}
+
+{"phrase": "Walk me through the exact user actions step by step.", "intents": "ask_for_repro"}
+{"phrase": "Can you document the precise click sequence?", "intents": "ask_for_repro"}
+{"phrase": "Please detail the API calls in chronological order.", "intents": "ask_for_repro"}
+{"phrase": "What's the exact data input that triggers this?", "intents": "ask_for_repro"}
+{"phrase": "Could you trace the complete user journey?", "intents": "ask_for_repro"}
+{"phrase": "I need the systematic test case procedure.", "intents": "ask_for_repro"}
+{"phrase": "Can you break down the workflow into discrete steps?", "intents": "ask_for_repro"}
+{"phrase": "Please provide the reproducible test scenario.", "intents": "ask_for_repro"}
+{"phrase": "What's the minimal set of actions to trigger this?", "intents": "ask_for_repro"}
+{"phrase": "Could you outline the reproduction methodology?", "intents": "ask_for_repro"}
+{"phrase": "I need the step-by-step recreation guide.", "intents": "ask_for_repro"}
+{"phrase": "Can you document the exact browser interactions?", "intents": "ask_for_repro"}
+{"phrase": "Please describe the data setup requirements.", "intents": "ask_for_repro"}
+{"phrase": "What's the prerequisite state before reproduction?", "intents": "ask_for_repro"}
+{"phrase": "Could you provide the automation script equivalent?", "intents": "ask_for_repro"}
+{"phrase": "I need the detailed reproduction protocol.", "intents": "ask_for_repro"}
+{"phrase": "Can you map out the complete interaction flow?", "intents": "ask_for_repro"}
+{"phrase": "Please specify the timing between each action.", "intents": "ask_for_repro"}
+{"phrase": "What's the exact sequence of form submissions?", "intents": "ask_for_repro"}
+{"phrase": "Could you detail the navigation path taken?", "intents": "ask_for_repro"}
+
+{"phrase": "What's your current deployment architecture?", "intents": "ask_for_context"}
+{"phrase": "Could you describe your infrastructure setup?", "intents": "ask_for_context"}
+{"phrase": "Please share your technology stack details.", "intents": "ask_for_context"}
+{"phrase": "What's the load pattern during peak hours?", "intents": "ask_for_context"}
+{"phrase": "Can you describe your data volume characteristics?", "intents": "ask_for_context"}
+{"phrase": "What third-party services are integrated?", "intents": "ask_for_context"}
+{"phrase": "Could you provide your security configuration?", "intents": "ask_for_context"}
+{"phrase": "Please describe the user access patterns.", "intents": "ask_for_context"}
+{"phrase": "What's your current monitoring setup?", "intents": "ask_for_context"}
+{"phrase": "Can you share the geographic distribution?", "intents": "ask_for_context"}
+{"phrase": "What's the typical user session duration?", "intents": "ask_for_context"}
+{"phrase": "Could you describe your backup and recovery setup?", "intents": "ask_for_context"}
+{"phrase": "Please provide the network topology details.", "intents": "ask_for_context"}
+{"phrase": "What's your current database configuration?", "intents": "ask_for_context"}
+{"phrase": "Can you describe your caching strategy?", "intents": "ask_for_context"}
+{"phrase": "What's the current API rate limiting setup?", "intents": "ask_for_context"}
+{"phrase": "Could you share your CI/CD pipeline details?", "intents": "ask_for_context"}
+{"phrase": "Please describe your testing environment setup.", "intents": "ask_for_context"}
+{"phrase": "What's your current scaling mechanism?", "intents": "ask_for_context"}
+{"phrase": "Can you provide your disaster recovery metrics?", "intents": "ask_for_context"}
+
+{"phrase": "Our Learnosity implementation uses the PHP SDK with custom session management.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "The Items API is initialized with dynamic item selection based on user proficiency.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "We've implemented custom scoring algorithms that override Learnosity's default scoring.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "The Reports API integration includes real-time analytics dashboard updates.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "Our security implementation rotates consumer secrets on a monthly basis.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "We use Learnosity's Events API to trigger custom learning path adaptations.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "The Question Editor API is embedded within our content management system.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "Our implementation includes custom question types built with the Author API.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "We've configured white-labeling to match our institutional branding requirements.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "The Data API integration syncs assessment results to our student information system.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "Our Learnosity setup includes multi-tenant configuration for different client organizations.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "We implement custom proctoring integration alongside Learnosity's assessment engine.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "The item bank synchronization happens via scheduled Data API batch operations.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "Our Reports API implementation includes custom export formats for compliance reporting.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "We use Learnosity's Analytics API for predictive modeling of student performance.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "The platform integrates Learnosity with our single sign-on authentication system.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "Our implementation includes custom accessibility features beyond Learnosity's defaults.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "We've built a custom item preview system using the Author API preview functionality.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "The assessment delivery uses adaptive algorithms that adjust difficulty in real-time.", "intents": "confirm_learnosity_implementation_details"}
+{"phrase": "Our Learnosity integration includes custom webhook handlers for real-time event processing.", "intents": "confirm_learnosity_implementation_details"}
+
+{"phrase": "Configure the webhook endpoint to handle Learnosity event callbacks properly.", "intents": "propose_fix"}
+{"phrase": "Implement retry logic for failed API calls with exponential backoff.", "intents": "propose_fix"}
+{"phrase": "Add input validation before sending data to Learnosity APIs.", "intents": "propose_fix"}
+{"phrase": "Cache frequently accessed item metadata to reduce API calls.", "intents": "propose_fix"}
+{"phrase": "Implement circuit breaker pattern for Learnosity service calls.", "intents": "propose_fix"}
+{"phrase": "Add comprehensive logging for all Learnosity API interactions.", "intents": "propose_fix"}
+{"phrase": "Implement graceful degradation when Learnosity services are unavailable.", "intents": "propose_fix"}
+{"phrase": "Add health checks for all Learnosity service dependencies.", "intents": "propose_fix"}
+{"phrase": "Configure proper timeout values for Learnosity API requests.", "intents": "propose_fix"}
+{"phrase": "Implement rate limiting to respect Learnosity API quotas.", "intents": "propose_fix"}
+{"phrase": "Add monitoring and alerting for Learnosity service degradation.", "intents": "propose_fix"}
+{"phrase": "Implement proper error handling for Learnosity authentication failures.", "intents": "propose_fix"}
+{"phrase": "Configure load balancing for multiple Learnosity region endpoints.", "intents": "propose_fix"}
+{"phrase": "Add database connection pooling for improved performance.", "intents": "propose_fix"}
+{"phrase": "Implement async processing for non-critical Learnosity operations.", "intents": "propose_fix"}
+{"phrase": "Configure CDN caching for static Learnosity assets.", "intents": "propose_fix"}
+{"phrase": "Add request/response compression for Learnosity API calls.", "intents": "propose_fix"}
+{"phrase": "Implement proper session management for concurrent users.", "intents": "propose_fix"}
+{"phrase": "Configure horizontal scaling for high-traffic scenarios.", "intents": "propose_fix"}
+{"phrase": "Add performance monitoring for Learnosity integration points.", "intents": "propose_fix"}
+''' 
+
+def convert_to_jsonl(data_string):
+    """
+    Convert the input data to JSONL format
+    """
+    
+    # Use regex to find JSON objects
+    pattern = r'\{\s*"phrase":[^}]+\}'
+    matches = re.findall(pattern, data_string, re.DOTALL)
+    
+    jsonl_lines = []
+    
+    for match in matches:
+        try:
+            # Clean up the match and parse it
+            cleaned_match = match.strip()
+            json_obj = json.loads(cleaned_match)
+            
+            # Handle multiple intents (comma-separated) - always convert to list
+            intents = json_obj["intents"]
+            if "," in intents:
+                # Split multiple intents into a list
+                intent_list = [intent.strip() for intent in intents.split(",")]
+                json_obj["intents"] = intent_list
+            else:
+                # Single intent - still wrap in a list for consistency
+                json_obj["intents"] = [intents.strip()]
+            
+            jsonl_lines.append(json.dumps(json_obj))
+            
+        except json.JSONDecodeError as e:
+            print(f"Error parsing JSON: {match[:50]}... - {e}")
+            continue
+    
+    return "\n".join(jsonl_lines)
+
+
+
+if __name__ == "__main__":
+    # Convert the data
+    jsonl_output = convert_to_jsonl(string)
+    file_path = os.path.join(pathlib.Path.cwd(), "learnosity_support_intents_validation2.jsonl")
+    # Save to file
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(jsonl_output)
+
+    print(f"Conversion complete! Generated {len(jsonl_output.splitlines())} lines")
+    print("\nFirst few lines of output:")
+    for i, line in enumerate(jsonl_output.splitlines()[:5]):
+        print(f"{i+1}: {line}")
+
+    print(f"\nFile saved as: {file_path}")
+
+    # Show intent distribution
+    intent_counts = {}
+    for line in jsonl_output.splitlines():
+        data = json.loads(line)
+        intents = data["intents"]
+        # All intents are now lists
+        for intent in intents:
+            intent_counts[intent] = intent_counts.get(intent, 0) + 1
+
+    print(f"\nIntent Distribution:")
+    for intent, count in sorted(intent_counts.items()):
+        print(f"  {intent}: {count}")

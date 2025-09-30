@@ -3,7 +3,7 @@ import re
 import pytest
 import torch
 
-from intents import TextClassifier
+from ..core.intents import TextClassifier
 
 
 # Dummy ClassificationResult for type checking (since it's not in the provided code)

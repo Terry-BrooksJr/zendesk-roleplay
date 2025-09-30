@@ -7,6 +7,7 @@ Enhanced with session state management for milestones, penalties, and applicatio
 
 import hashlib
 import json
+import os
 import uuid
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
@@ -26,10 +27,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.sql import func
 
-engine = create_engine(
-    "postgresql+psycopg://assessment_user:tep4XMU8efu*ydv!yqt@db.blackberry-py.dev:5432/assessment_db",
-    future=True,
-)
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg://assessment_user:tep4XMU8efu*ydv!yqt@db.blackberry-py.dev:5432/assessment_db")
+
+engine = create_engine(DATABASE_URL, future=True, echo=False)
 md = MetaData()
 
 sessions = Table(

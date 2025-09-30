@@ -8,6 +8,9 @@ import torch
 from loguru import logger
 from sentence_transformers import SentenceTransformer, util
 
+from ..common.embedding_cache import cache_embedding, get_cached_embedding
+
+global _CLASSIFIER_INSTANCE
 _CLASSIFIER_INSTANCE = None
 
 
@@ -45,8 +48,21 @@ class TextEmbedder:
     def get_text_embedding(self, text: Union[str, torch.Tensor]) -> torch.Tensor:
         if isinstance(text, torch.Tensor):
             return text
+
         model = TextEmbedder._MODEL_REGISTRY.get(self.model_id)
-        return model.encode([text], convert_to_tensor=True, normalize_embeddings=True)
+        model_name = getattr(model, "model_name", str(self.model_id))
+
+        # Check cache first
+        cached_embedding = get_cached_embedding(text, model_name)
+        if cached_embedding is not None:
+            return cached_embedding
+
+        # Compute and cache embedding
+        embedding = model.encode(
+            [text], convert_to_tensor=True, normalize_embeddings=True
+        )
+        cache_embedding(text, model_name, embedding)
+        return embedding
 
 
 class TextClassifier:
@@ -492,9 +508,9 @@ def detect(input_text: str) -> ClassificationResult:
         Returns:
             ClassificationResult containing the detected intent categories.
     """
-    if _CLASSIFER_INSTANCE is None:
-        _CLASSIFER_INSTANCE = TextClassifier()
-    intentions = _CLASSIFER_INSTANCE.classify(input_text)
+    if _CLASSIFIER_INSTANCE is None:
+        _CLASSIFIER_INSTANCE = TextClassifier()
+    intentions = _CLASSIFIER_INSTANCE.classify(input_text)
     return intentions.categories
 
 

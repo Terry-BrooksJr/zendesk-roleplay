@@ -273,3 +273,5 @@ pyrightconfig.json
 .task
 sessions/*.jsonl
 data/*-eval.py
+.claude
+sessions
