@@ -4,13 +4,17 @@ import gradio as gr
 import requests
 from gradio_modal import Modal
 from loguru import logger
-
+import tempfile
 # Highlight.io frontend snippet
 HIGHLIGHT_IO_JS = """
 <script src="https://unpkg.com/highlight.run"></script>
 <script>
+
+
   H.init('mem5lxpg', {
     environment: 'production',
+    enableCanvasRecording: true,
+    tracingOrigins: true,
     version: 'commit:abcdefg12345',
     networkRecording: {
       enabled: true,
@@ -19,29 +23,30 @@ HIGHLIGHT_IO_JS = """
   });
 </script>
 """
+
+
 def make_download_file(session_id: str, fmt: str):
     if not session_id:
-        return None
-    #     url = f"{BASE}/transcript?session_id={session_id}&fmt={fmt}"
-    #     r = requests.get(url, timeout=30)
-    #     r.raise_for_status()
-    #     suffix = ".jsonl" if fmt == "jsonl" else f".{fmt}"
-    #     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
-    #     tmp.write(r.content)
-    #     tmp.flush()
-    #     tmp.close()
-    #     return tmp.name
+        url = f"{BASE}/transcript?session_id={session_id}&fmt={fmt}"
+        r = requests.get(url, timeout=30)
+        r.raise_for_status()
+        suffix = ".jsonl" if fmt == "jsonl" else f".{fmt}"
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+        tmp.write(r.content)
+        tmp.flush()
+        tmp.close()
+        return tmp.name
 
-    # with gr.Row():
-    #     fmt_dd = gr.Dropdown(
-    #         choices=["jsonl", "json", "txt"],
-    #         value="jsonl",
-    #         label="Export format",
-    #     )
-    #     dl_btn = gr.DownloadButton(
-    #         label="⬇️ Download Transcript",
-    #         value=None,
-    #     )
+    with gr.Row():
+        fmt_dd = gr.Dropdown(
+            choices=["jsonl", "json", "txt"],
+            value="jsonl",
+            label="Export format",
+        )
+        dl_btn = gr.DownloadButton(
+            label="⬇️ Download Transcript",
+            value=None,
+        )
 
     def on_download(fmt):
         # friendly guard: no session yet
@@ -226,26 +231,92 @@ def chat_fn(user_msg, history, session_id):  # sourcery skip: low-code-quality
     return {"role": "assistant", "content": bot}
 
 
-with gr.Blocks(head=HIGHLIGHT_IO_JS) as demo:
-    gr.Markdown("### Zendesk-Style Roleplay (Deterministic, LangGraph)")
+with gr.Blocks(
+    head=HIGHLIGHT_IO_JS,
+    title="Learnosity Technical Support Engineer Skills Assessment",
+) as demo:
+    gr.Markdown("### Learnosity Technical Support Engineer Skills Assessment")
     session_state = gr.State("")
 
     review_btn = gr.Button("Review Instructions")
-    chat = gr.ChatInterface(
-        fn=lambda m, h: chat_fn(m, h, session_state.value),
-        type="messages",
-    )
-    gr.Markdown(
+    with gr.Tab("Roleplay Chat"):
+        chat = gr.ChatInterface(
+            fn=lambda m, h: chat_fn(m, h, session_state.value),
+            type="messages",
+        )
+        gr.Markdown(
         """
-    [Open Lab Environment](https://www.example.com/company-policies)
+        [Open Lab Environment](https://www.example.com/company-policies)
         """
-    )
+        )
+    with gr.Tab("JS DOM Manipulation Code Snippet"):
+        gr.Markdown(
+            """
+Write a annotated vanilla JavaScript snippets  achieves the following: 
+
+- When an assessment has started the submission process displays a full‑screen modal overlay with a spinner and a status message (“Submitting your assessment…”). Disable all clickable elements on the page underneath the overlay.
+- If submission is successful within 15 seconds, update the status message to “Submitted successfully!” for five seconds.
+display a full‑screen modal overlay with a table that displays:”
+ - - Item Number Order (1,2,3..)
+ - - the time from loading an assessment item and and response is submitted in seconds
+- If assessment:submit:error fires, or takes longer than 15 seconds, update the status message to “Submission failed – please try again later” and provide a functional “Retry” button.
+
+
+### Constraints:
+- Use may use frameworks for the spinner (i.e. Spin.js), otherwise vanilla JavaScript  (ES6) only. 
+- Ensure you clean up event listeners and timers to prevent memory leaks or multiple triggers.
+
+
+__When responding, clearly separate annotate your snippet with inline comments.__
+"""
+
+        )
+        code_editor = gr.Code(
+            label="Enter your JavaScript code snippet here",
+            value="// Write your JavaScript code here\n",
+            language="javascript",
+            lines=250,
+        )
+        run_btn = gr.Button("Run Code")
+        output_box = gr.Textbox(
+            label="Output",
+            placeholder="Output will be displayed here after running the code.",
+            lines=10,
+        )
+
+        def run_code(code):
+            try:
+                import subprocess
+                import sys
+                import os
+
+                # Write the code to a temporary file
+                with open("temp_code.js", "w") as f:
+                    f.write(code)
+
+                # Execute the JavaScript code using Node.js
+                result = subprocess.run(
+                    ["node", "temp_code.js"],
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
+                )
+
+                # Clean up the temporary file
+                os.remove("temp_code.js")
+
+                if result.returncode != 0:
+                    return f"Error:\n{result.stderr}"
+                return result.stdout
+            except Exception as e:
+                return f"Exception occurred: {e}"
+
+        run_btn.click(run_code, inputs=code_editor, outputs=output_box)
     with Modal(visible=True) as intro_modal:
         gr.Markdown(
             """
         ### Customer Support Roleplay Scenario
-        
-        You are a customer support agent for a fictional e-commerce company. Your task is to assist customers with their inquiries, resolve issues, and provide excellent service.
+        You are about to engage in a role-playing scenario where you will act as a customer support agent for Learnosity, assisting a customer with their inquiries and technical issues. It will consist of two parts - the roleplay itself and the submision of a JS Based DOM Manipulation code snippet.
         ## Instructions
 
         1. Enter a candidate label (for your reference; not stored as PII) provided to you in the email.
@@ -255,7 +326,7 @@ with gr.Blocks(head=HIGHLIGHT_IO_JS) as demo:
         5. The assistant will reply based on the scenario context.
         6.Prior to starting, ensure you have read the scenario description, review any the suggested pre-reading materials provided to you below.
         
-        You will be provided with a lab environment to test any technical solutions you propose during the roleplay.
+        You will be provided instructions on how to make a lab environment to test any technical solutions you propose during the roleplay if desired .
         
         Please note that the assistant's responses are generated based on the scenario and may not always be perfect. Use your judgment to guide the conversation.
 
@@ -267,10 +338,12 @@ with gr.Blocks(head=HIGHLIGHT_IO_JS) as demo:
             """
         ### Scenario Description
             
-        You are a Learnosity Application Support Engineer. Your task is to assist customers from all levels of technical skill levels implement Learnosity APIs and enhance their digital assessment capabilities by serving as a trusted technical advisor and providing excellent service.
+        EduHub Online provides an assessment platform powered by the Learnosity suite of APIs These APIs allow clients to author questions, deliver assessments and retrieve reports. Clients integrate Learnosity into their own applications and rely on EduHub’s support team when issues arise.
+
+        EduHub has opened a ticket reporting separate issues after migrating their Author/Items API integration from the 2024.3.LTS release to 2025.1.LTS. They also recently began using the Reports API.
         
         **Key Responsibilities:**
-        - Respond to customer inquiries via email and chat in a timely and professional manner.
+        - Respond to customer inquiries via chat in a timely and professional manner.
         - Troubleshoot and resolve technical issues related to Learnosity APIs.
         - Provide guidance on best practices for using Learnosity products.
         - Collaborate with internal teams to escalate and resolve complex issues.
@@ -291,14 +364,29 @@ with gr.Blocks(head=HIGHLIGHT_IO_JS) as demo:
             """
         ### Suggested Pre-Reading Materials
         To help you prepare for the customer support roleplay scenario, here are some suggested pre-reading materials:
-        1. [Getting Started With the Author API](https://help.learnosity.com/hc/en-us/articles/360000754958-Getting-Started-With-the-Author-API)
+        1. [Lifecycle of a Learnosity Session](https://help.learnosity.com/hc/en-us/articles/360002842798-Lifecycle-of-a-Learnosity-Session)
         2. [Release Cadence and Version Lifecycle](https://help.learnosity.com/hc/en-us/articles/360001268538-Release-Cadence-and-Version-Lifecycle)
         3. [Learnosity Releases Overview](https://help.learnosity.com/hc/en-us/articles/360000758837-Learnosity-Releases-Overview)
-        4. [Author API Developer Documentation](https://help.learnosity.com/hc/en-us/articles/16458061166365-author-api-Author-API)
+        4. [Migration Guide for 2025.1.LTS](https://help.learnosity.com/hc/en-us/articles/23009890851101-Migration-Guide-for-2025-1-LTS)
         
 
         Please review these materials to familiarize yourself with best practices in customer support. This will help you perform better during the roleplay scenario.
         """
+        )
+        name = gr.Textbox(
+            label="Candidate Label (not stored as PII)",
+            placeholder="Provided in email to you",
+        )
+        start_btn = gr.Button("Start Scenario")
+    with Modal(visible=False) as lab_env_modal:
+        gr.Markdown(
+            """
+            ### Create a Lab Environment`
+         Create a Local Lab Environment to Test Learnosity APIs from one of the many SDK Options found on GitHub.
+         [Learnosity SDKs](
+
+            Please review these materials to familiarize yourself with best practices in customer support. This will help you perform better during the roleplay scenario.
+            """
         )
         name = gr.Textbox(
             label="Candidate Label (not stored as PII)",
@@ -338,6 +426,7 @@ with gr.Blocks(head=HIGHLIGHT_IO_JS) as demo:
         [intro_modal, scenario_modal, prereading_modal],
     )
     start_btn.click(on_start, inputs=name, outputs=[chat.chatbot, prereading_modal])
+
 
 def launch_ui():
     """Launch the Gradio UI server."""

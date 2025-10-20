@@ -1,6 +1,6 @@
 import os
 from typing import Dict, List
-
+import yaml
 import httpx
 from claude_agent_sdk import (AssistantMessage, ClaudeSDKClient, ResultMessage,
                               TextBlock)
@@ -11,10 +11,15 @@ from tenacity import (retry, retry_if_exception_type, stop_after_attempt,
 from ..common.circuit_breaker import CircuitBreaker, CircuitBreakerError
 from ..data.anthropic_model_prompt import ChatClient
 
-MODEL_PROVIDER = os.environ["MODEL_PROVIDER"].lower()  # openai|anthropic|ollama
+MODEL_PROVIDER = os.environ["MODEL_PROVIDER"].lower()  
 MODEL_NAME = os.environ["MODEL_NAME"] # per-provider default applied if blank
 REQ_TIMEOUT = float(os.getenv("LLM_REQUEST_TIMEOUT", "30"))
 MAX_OUT_TOKENS = int(os.getenv("MAX_OUTPUT_TOKENS", "512"))
+
+def get_scenario():
+    with open(os.environ["SCENARIO_FILE"], mode="r", encoding="utf-8") as f:
+        scenario = yaml.safe_load(f)
+    return scenario
 
 
 class LLMProvider:
@@ -25,8 +30,12 @@ class LLMProvider:
 
     def __init__(self, system_prompt: str, temperature: float, top_p: float):
         self.system_prompt = (system_prompt or "").strip()
-        self.temperature = float(temperature)
-        self.top_p = float(top_p)
+        self.temperature = (
+            float(get_scenario()['temperature'])
+            if 'temperature' in get_scenario()
+            else temperature
+        )
+        self.top_p = float(get_scenario()['top_p']) if 'top_p' in get_scenario() else top_p
 
     async def chat(self, messages: List[Dict[str, str]]) -> str:
         """Generate a chat response from the LLM given a list of messages.
@@ -75,7 +84,7 @@ def _inject_system_prompt(
 
 
 def _truncate_history(
-    messages: List[Dict[str, str]], keep: int = 12
+    messages: List[Dict[str, str]], keep: int = 50
 ) -> List[Dict[str, str]]:
     """Truncates the message history to keep only the most recent messages.
 
@@ -170,7 +179,11 @@ class AnthropicProvider(LLMProvider):
         super().__init__(system_prompt, temperature, top_p)
         self.api_key = os.environ["ANTHROPIC_API_KEY"]
         self.model = os.environ.get("MODEL_NAME") if os.environ.get("MODEL_NAME") else "claude-sonnet-4-5-20250929"
-        self.chat_client = ChatClient(api_key=self.api_key,tools=[
+        self.chat_client = ChatClient(
+            api_key=self.api_key,
+            temperature=self.temperature,
+            max_tokens=MAX_OUT_TOKENS,
+            tools=[
         {
             "name": "web_search",
             "type": "web_search_20250305"
@@ -179,6 +192,7 @@ class AnthropicProvider(LLMProvider):
         "type": "enabled",
         "budget_tokens": 16000
     },betas=["web-search-2025-03-05"])
+        
 
     @retry(
         wait=wait_exponential_jitter(1, 8),
@@ -189,36 +203,34 @@ class AnthropicProvider(LLMProvider):
 
 
     async def chat(self, messages: List[Dict[str, str]]) -> str:
-        # Anthropic uses separate system + messages
-        # url = "https://api.anthropic.com/v1/messages"
-        # user_msgs = [
-        #     {"role": m["role"], "content": m["content"]}
-        #     for m in _truncate_history(messages)
-        # ]
-        # payload = {
-        #     "model": self.model,
-        #     "system": self.system_prompt or None,
-        #     "temperature": self.temperature,
-        #     "top_p": self.top_p,
-        #     "max_tokens": MAX_OUT_TOKENS,
-        #     "messages": user_msgs,
-        # }
-        # headers = {
-        #     "x-api-key": self.api_key,
-        #     "anthropic-version": "2023-06-01",
-        #     "content-type": "application/json",
-        # }
-        # async with httpx.AsyncClient(timeout=REQ_TIMEOUT) as client:
-        #     r = await client.post(url, headers=headers, json=payload)
-        # r.raise_for_status()
-        # data = r.json()
-        response = await self.chat_client.create_message()
+        # # Clear previous context and update with current conversation
+        self.chat_client.clear_context_messages()
+
+        # Add conversation messages to context
+        user_msgs = [
+            {"role": m["role"], "content": m["content"]}
+            for m in _truncate_history(messages)
+        ]
+
+        for msg in user_msgs:
+            self.chat_client.update_context_messages(msg)
+
+        response = self.chat_client.create_message()
         try:
-            blocks = response.get("content", [])
-            text_parts = [b.get("text", "") for b in blocks if isinstance(b, dict) and b.get("type") == "text"]
+            blocks = response.content if hasattr(response, 'content') else response.get("content", [])
+            if isinstance(blocks, str):
+                return blocks.strip()
+
+            text_parts = []
+            for b in blocks:
+                if hasattr(b, 'text'):
+                    text_parts.append(b.text)
+                elif isinstance(b, dict) and b.get("type") == "text":
+                    text_parts.append(b.get("text", ""))
+
             return "\n".join([t for t in text_parts if t]).strip()
         except Exception as e:
-            logger.error(f"[Anthropic] Unexpected response schema: {data} | {e}")
+            logger.error(f"[Anthropic] Unexpected response schema: {response} | {e}")
             raise
 
 

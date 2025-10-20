@@ -9,12 +9,11 @@ This script:
 - Provides graceful shutdown handling
 """
 
-import os
 import signal
+import subprocess
 import sys
 import threading
 import time
-import subprocess
 from pathlib import Path
 from typing import Optional
 
@@ -23,8 +22,9 @@ src_dir = Path(__file__).parent / "src"
 sys.path.insert(0, str(src_dir))
 
 try:
-    from watchdog.observers import Observer
     from watchdog.events import FileSystemEventHandler
+    from watchdog.observers import Observer
+
     WATCHDOG_AVAILABLE = True
 except ImportError:
     # Create dummy classes when watchdog is not available
@@ -35,10 +35,13 @@ except ImportError:
     class Observer:
         def schedule(self, handler, path, recursive=False):
             pass
+
         def start(self):
             pass
+
         def stop(self):
             pass
+
         def join(self):
             pass
 
@@ -48,15 +51,11 @@ except ImportError:
 def run_backend():
     """Run the FastAPI backend server."""
     try:
-        from src.core.app import app
         import uvicorn
-        uvicorn.run(
-            app,
-            host="0.0.0.0",
-            port=8000,
-            log_level="info",
-            access_log=True
-        )
+
+        from src.core.app import app
+
+        uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info", access_log=True)
     except Exception as e:
         print(f"❌ Backend error: {e}")
 
@@ -65,6 +64,7 @@ def run_ui():
     """Run the Gradio UI server."""
     try:
         from src.core.ui import launch_ui
+
         launch_ui()
     except Exception as e:
         print(f"❌ UI error: {e}")
@@ -84,7 +84,7 @@ class FileChangeHandler(FileSystemEventHandler):
             return
 
         # Only restart for Python files
-        if not event.src_path.endswith('.py'):
+        if not event.src_path.endswith(".py"):
             return
 
         # Debounce rapid changes
@@ -128,7 +128,8 @@ class ServiceManager:
 
         try:
             cmd = [
-                sys.executable, "-c",
+                sys.executable,
+                "-c",
                 f"""
 import sys
 sys.path.insert(0, r'{src_dir}')
@@ -143,7 +144,7 @@ except Exception as e:
     import traceback
     traceback.print_exc()
     sys.exit(1)
-"""
+""",
             ]
 
             self.backend_process = subprocess.Popen(
@@ -152,14 +153,14 @@ except Exception as e:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 universal_newlines=True,
-                bufsize=1
+                bufsize=1,
             )
 
             # Start a thread to log output
             threading.Thread(
                 target=self.log_process_output,
                 args=(self.backend_process, "Backend"),
-                daemon=True
+                daemon=True,
             ).start()
 
             print("🚀 Backend process started")
@@ -176,7 +177,8 @@ except Exception as e:
 
         try:
             cmd = [
-                sys.executable, "-c",
+                sys.executable,
+                "-c",
                 f"""
 import sys
 sys.path.insert(0, r'{src_dir}')
@@ -190,7 +192,7 @@ except Exception as e:
     import traceback
     traceback.print_exc()
     sys.exit(1)
-"""
+""",
             ]
 
             self.ui_process = subprocess.Popen(
@@ -199,14 +201,14 @@ except Exception as e:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 universal_newlines=True,
-                bufsize=1
+                bufsize=1,
             )
 
             # Start a thread to log output
             threading.Thread(
                 target=self.log_process_output,
                 args=(self.ui_process, "UI"),
-                daemon=True
+                daemon=True,
             ).start()
 
             print("🎨 UI process started")
@@ -256,7 +258,8 @@ except Exception as e:
             return
 
         print("♻️ Restarting services due to file changes...")
-        self.stop_services()
+        # Stop services but don't join the observer thread since we're in it
+        self.stop_services_for_restart()
 
         # Reset restart counts for file-triggered restarts
         self.backend_restart_count = 0
@@ -264,6 +267,36 @@ except Exception as e:
 
         time.sleep(2)  # Brief pause
         self.start_services()
+
+    def stop_services_for_restart(self):
+        """Stop backend and UI services only (not observer) for restart."""
+        print("🛑 Stopping services...")
+
+        if self.backend_process:
+            try:
+                self.backend_process.terminate()
+                self.backend_process.wait(timeout=5)
+                print("✅ Backend stopped")
+            except subprocess.TimeoutExpired:
+                self.backend_process.kill()
+                print("✅ Backend killed")
+            except Exception as e:
+                print(f"⚠️ Error stopping backend: {e}")
+            finally:
+                self.backend_process = None
+
+        if self.ui_process:
+            try:
+                self.ui_process.terminate()
+                self.ui_process.wait(timeout=5)
+                print("✅ UI stopped")
+            except subprocess.TimeoutExpired:
+                self.ui_process.kill()
+                print("✅ UI killed")
+            except Exception as e:
+                print(f"⚠️ Error stopping UI: {e}")
+            finally:
+                self.ui_process = None
 
     def start_services(self):
         """Start both backend and UI services."""
@@ -289,6 +322,7 @@ except Exception as e:
 
     def run(self, watch_files=True):
         """Main run method to start all services."""
+
         def signal_handler(signum, frame):
             print(f"\n🔶 Received signal {signum}")
             self.shutdown_flag = True
@@ -328,19 +362,32 @@ except Exception as e:
                         last_check = time.time()
 
                         # Check if processes are still alive
-                        if self.backend_process and self.backend_process.poll() is not None:
+                        if (
+                            self.backend_process
+                            and self.backend_process.poll() is not None
+                        ):
                             if self.backend_restart_count < self.max_restarts:
-                                print(f"⚠️ Backend process died (exit code: {self.backend_process.poll()})")
-                                print(f"   Waiting {self.restart_delay}s before restart...")
+                                print(
+                                    f"⚠️ Backend process died (exit code: {self.backend_process.poll()})"
+                                )
+                                print(
+                                    f"   Waiting {self.restart_delay}s before restart..."
+                                )
                                 time.sleep(self.restart_delay)
                                 self.start_backend()
                             else:
-                                print("❌ Backend failed too many times, not restarting")
+                                print(
+                                    "❌ Backend failed too many times, not restarting"
+                                )
 
                         if self.ui_process and self.ui_process.poll() is not None:
                             if self.ui_restart_count < self.max_restarts:
-                                print(f"⚠️ UI process died (exit code: {self.ui_process.poll()})")
-                                print(f"   Waiting {self.restart_delay}s before restart...")
+                                print(
+                                    f"⚠️ UI process died (exit code: {self.ui_process.poll()})"
+                                )
+                                print(
+                                    f"   Waiting {self.restart_delay}s before restart..."
+                                )
                                 time.sleep(self.restart_delay)
                                 self.start_ui()
                             else:
@@ -352,6 +399,7 @@ except Exception as e:
         except Exception as e:
             print(f"❌ Error in main loop: {e}")
             import traceback
+
             traceback.print_exc()
         finally:
             self.stop_services()

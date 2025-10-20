@@ -500,14 +500,15 @@ class TextClassifier:
 def detect(input_text: str) -> ClassificationResult:
     """Detects intent categories for a given input text using a singleton classifier instance.
 
-        This function classifies the input text and returns the detected intent categories.
+    This function classifies the input text and returns the detected intent categories.
 
-        Args:
-            input_text: The text to classify.
-    ww
-        Returns:
-            ClassificationResult containing the detected intent categories.
+    Args:
+        input_text: The text to classify.
+
+    Returns:
+        ClassificationResult containing the detected intent categories.
     """
+    global _CLASSIFIER_INSTANCE
     if _CLASSIFIER_INSTANCE is None:
         _CLASSIFIER_INSTANCE = TextClassifier()
     intentions = _CLASSIFIER_INSTANCE.classify(input_text)

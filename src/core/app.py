@@ -3,7 +3,6 @@ import time
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from typing import Any, Dict, Literal, Optional, TypedDict
-from highlight_io.integrations.fastapi import FastAPIMiddleware
 
 import yaml
 from dotenv import load_dotenv
@@ -21,14 +20,7 @@ except ImportError:  # Fallback if structlog isn't installed
     _STRUCTLOG_AVAILABLE = False
     structlog = None  # sentinel for type checkers
 
-import json
 
-from fastapi.responses import JSONResponse, PlainTextResponse, Response
-from highlight_io import H
-
-from .intents import detect
-from .providers import make_provider
-from .scoring import compute_score
 from ..common.rate_limiter import rate_limit_middleware
 from ..common.storage import (
     add_milestone,
@@ -41,145 +33,16 @@ from ..common.storage import (
     update_session,
 )
 from ..common.validation import ChatRequestModel, validate_json_input
+from .intents import detect
+from .providers import make_provider
+from .scoring import compute_score
 
-# Initialize Highlight
-H(
-    "mem5lxpg",
-    instrument_logging=True,
-    otlp_endpoint="https://otel.highlight.io:4318",
-)
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Application lifespan manager for startup and shutdown tasks."""
-    # Startup
-    global SCEN, PROVIDER_CACHE
-
-    logger.info("Starting FastAPI application")
-    struct_logger.info("application.startup", action="loading_scenario")
-    H.record_log(
-            level="info",
-            message=f"Starting FastAPI application"
-        )
-    try:
-        with open("scenario.yml", mode="r", encoding="utf-8") as f:
-            SCEN = yaml.safe_load(f)
-
-        # Validate required fields before proceeding
-        required_fields = ["determinism", "id", "seed_message", "artifacts", "rubric"]
-        for field in required_fields:
-            if field not in SCEN:
-                raise ValueError(f"Missing required field in scenario.yml: {field}")
-
-        # Pre-warm provider cache
-        PROVIDER_CACHE["default"] = make_provider(
-            system_prompt=SCEN["determinism"]["style"],
-            temperature=float(SCEN["determinism"]["temperature"]),
-            top_p=float(SCEN["determinism"]["top_p"]),
-        )
-
-        struct_logger.info(
-            "application.startup.complete",
-            scenario_id=SCEN.get("id"),
-            determinism_config=SCEN.get("determinism"),
-        )
-        H.record_log(
-            level="info",
-            message=f"Processing input: {input_text}",
-        )
-    except (KeyError, ValueError, FileNotFoundError) as e:
-        struct_logger.error("application.startup.failed", error=str(e), exc_info=True)
-        logger.error(f"Failed to start application: {str(e)}")
-        import sys
-
-        sys.exit(1)
-    except Exception as e:
-        struct_logger.error(
-            "application.startup.unknown_error", error=str(e), exc_info=True
-        )
-        logger.error(f"Unknown error during startup: {str(e)}")
-        import sys
-
-        sys.exit(1)
-
-    yield
-
-    # Shutdown
-    logger.info("Shutting down FastAPI application")
-    struct_logger.info("application.shutdown")
-
-
-app = FastAPI(
-    title=os.environ.get("TITLE", "Zendesk Roleplay (LangGraph)"), lifespan=lifespan
-)
-app.add_middleware(FastAPIMiddleware)
-SESS_DIR = os.path.abspath("./sessions")
-os.makedirs(SESS_DIR, exist_ok=True)
-
-_SESS_CACHE = {}
-
-
-def _session_path(session_id: str) -> str:
-    return os.path.join(SESS_DIR, f"{session_id}.jsonl")
-
-
-def load_session(session_id: str) -> dict:
-    if session_id in _SESS_CACHE:
-        return _SESS_CACHE[session_id]
-    path = _session_path(session_id)
-    if not os.path.exists(path):
-        _SESS_CACHE[session_id] = {
-            "session_id": session_id,
-            "started_at": time.time(),
-            "transcript": [],
-            "milestones": {},
-            "phase": "intro",
-        }
-        return _SESS_CACHE[session_id]
-    with open(path, "r", encoding="utf-8") as fh:
-        lines = [json.loads(l) for l in fh if l.strip()]
-    latest = lines[-1] if lines else {}
-    _SESS_CACHE[session_id] = latest
-    return latest
-
-
-def save_session(session_id: str, state: dict) -> None:
-    _SESS_CACHE[session_id] = state
-    path = _session_path(session_id)
-    with open(path, "a", encoding="utf-8") as fh:
-        fh.write(json.dumps(state, ensure_ascii=False) + "\n")
-
-
-@app.get("/transcript")
-def export_transcript(session_id: str, fmt: str = "jsonl"):
-    state = load_session(session_id)
-    transcript = state.get("transcript", [])
-    if fmt == "json":
-        return JSONResponse({"session_id": session_id, "transcript": transcript})
-    if fmt == "txt":
-        lines = [f"{t['role'].upper()}: {t['text']}" for t in transcript]
-        return PlainTextResponse("\n\n".join(lines))
-    buf = [json.dumps(t, ensure_ascii=False) for t in transcript]
-    return Response("\n".join(buf), media_type="application/x-ndjson")
-
-
-def _provider_meta():
-    return {
-        "chat": {
-            "provider": os.environ["MODEL_PROVIDER"],
-            "chat_model": os.environ["MODEL_NAME"],
-            "timeout": float(os.getenv("LLM_REQUEST_TIMEOUT", "30")),
-            "max_output_tokens": int(os.getenv("MAX_OUTPUT_TOKENS", "512")),
-        },
-        "embedding": {
-            "provider": os.environ.get("EMBEDDING_PROVIDER", "none"),
-            "embedding_model": os.environ.get("EMBEDDING_MODEL", "none"),
-            "timeout": float(os.getenv("EMBEDDING_REQUEST_TIMEOUT", "30")),
-            "max_tokens": int(os.getenv("MAX_EMBEDDING_TOKENS", "8192")),
-        },
-    }
-
+# Initialize Highlight - DISABLED due to connectivity issues
+# H(
+#     "mem5lxpg",
+#     instrument_logging=True,
+#     otlp_endpoint="https://otel.highlight.io:4318",
+# )
 
 # Load environment and scenario configuration
 load_dotenv()
@@ -196,6 +59,7 @@ class Turn(TypedDict):
 # Cache scenario configuration at startup
 SCEN: Optional[Dict[str, Any]] = None
 PROVIDER_CACHE: Dict[str, Any] = {}
+
 # Configure structured logging (with fallback if structlog is missing)
 if _STRUCTLOG_AVAILABLE:
     structlog.configure(
@@ -216,6 +80,7 @@ if _STRUCTLOG_AVAILABLE:
         cache_logger_on_first_use=True,
     )
     struct_logger = structlog.get_logger()
+    logger = structlog.get_logger()
 else:
     # Minimal fallback: use loguru for structured-ish logs
     class _StructLoggerFallback:
@@ -228,14 +93,72 @@ else:
                     message = f"{message} | " + ", ".join(
                         f"{k}={v}" for k, v in kwargs.items()
                     )
+                from loguru import logger as loguru_logger
+
                 getattr(
-                    logger,
+                    loguru_logger,
                     name if name in {"debug", "info", "warning", "error"} else "info",
                 )(message)
 
             return _log
 
     struct_logger = _StructLoggerFallback()
+    logger = struct_logger
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan manager for startup and shutdown tasks."""
+    # Startup
+    global SCEN, PROVIDER_CACHE
+
+    struct_logger.info("application.startup", action="loading_scenario")
+
+    try:
+        with open(os.environ["SCENARIO_FILE"], mode="r", encoding="utf-8") as f:
+            SCEN = yaml.safe_load(f)
+
+        # Validate required fields before proceeding
+        required_fields = ["determinism", "id", "seed_message", "artifacts", "rubric"]
+        for field in required_fields:
+            if field not in SCEN:
+                raise ValueError(f"Missing required field in scenario.yml: {field}")
+
+        # Pre-warm provider cache
+        PROVIDER_CACHE["default"] = make_provider(
+            system_prompt=SCEN["determinism"]["style"],
+            temperature=float(SCEN["determinism"]["temperature"]),
+            top_p=float(SCEN["determinism"]["top_p"]),
+        )
+
+        struct_logger.info(
+            "application.startup.complete",
+            scenario_id=SCEN.get("id"),
+            determinism_config=SCEN.get("determinism"),
+        )
+    except (KeyError, ValueError, FileNotFoundError) as e:
+        struct_logger.error("application.startup.failed", error=str(e), exc_info=True)
+        import sys
+
+        sys.exit(1)
+    except Exception as e:
+        struct_logger.error(
+            "application.startup.unknown_error", error=str(e), exc_info=True
+        )
+        import sys
+
+        sys.exit(1)
+
+    yield
+
+    # Shutdown
+    struct_logger.info("application.shutdown")
+
+
+app = FastAPI(
+    title=os.environ.get("TITLE", "Zendesk Roleplay (LangGraph)"), lifespan=lifespan
+)
+# app.add_middleware(FastAPIMiddleware)  # Disabled with Highlight.io
 
 
 class Msg(BaseModel):
@@ -532,6 +455,7 @@ graph = g.compile()
 # --- API Endpoints with Enhanced Logging ---
 
 
+# @trace  # Disabled with Highlight.io
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     """Log all HTTP requests and responses."""
@@ -575,6 +499,7 @@ async def log_requests(request: Request, call_next):
         raise
 
 
+# @trace  # Disabled with Highlight.io
 @app.post("/start")
 async def start(req: StartReq):
     """Initialize a new session and return session details.
@@ -615,19 +540,19 @@ async def start(req: StartReq):
             seed_message_length=len(seed),
         )
 
-        # Persist a full snapshot to JSONL for audit/export
-        save_session(
-            sid,
-            {
-                "session_id": sid,
-                "started_at": initial_state["started_at"],
-                "transcript": initial_state["transcript"],
-                "milestones": initial_state["milestones"],
-                "penalty": initial_state["penalty"],
-                "phase": "intro",
-                "last_bot": seed,
-            },
-        )
+        # Persist a full snapshot to JSONL for audit/export - DISABLED
+        # save_session(
+        #     sid,
+        #     {
+        #         "session_id": sid,
+        #         "started_at": initial_state["started_at"],
+        #         "transcript": initial_state["transcript"],
+        #         "milestones": initial_state["milestones"],
+        #         "penalty": initial_state["penalty"],
+        #         "phase": "intro",
+        #         "last_bot": seed,
+        #     },
+        # )
 
         return {"session_id": sid, "message": seed, "artifacts": []}
 
@@ -638,9 +563,10 @@ async def start(req: StartReq):
             error=str(e),
             exc_info=True,
         )
-        raise HTTPException(status_code=500, detail="Failed to start session")
+        raise HTTPException(status_code=500, detail="Failed to start session") from e
 
 
+# @trace  # Disabled with Highlight.io
 @app.post("/reply")
 async def reply(request: Request):
     """Process user message and return assistant reply.
@@ -801,19 +727,19 @@ async def reply(request: Request):
             response_length=len(out["last_bot"]),
         )
 
-        # Persist a complete snapshot to JSONL for export/restore
-        save_session(
-            validated_msg.session_id,
-            {
-                "session_id": validated_msg.session_id,
-                "started_at": updated_session_data["started_at"],
-                "transcript": out.get("transcript", []),
-                "milestones": out.get("milestones", []),
-                "penalty": out.get("penalty", 0.0),
-                "phase": out.get("phase", existing_session.get("phase", "intro")),
-                "last_bot": out.get("last_bot", ""),
-            },
-        )
+        # Persist a complete snapshot to JSONL for export/restore - DISABLED
+        # save_session(
+        #     validated_msg.session_id,
+        #     {
+        #         "session_id": validated_msg.session_id,
+        #         "started_at": updated_session_data["started_at"],
+        #         "transcript": out.get("transcript", []),
+        #         "milestones": out.get("milestones", []),
+        #         "penalty": out.get("penalty", 0.0),
+        #         "phase": out.get("phase", existing_session.get("phase", "intro")),
+        #         "last_bot": out.get("last_bot", ""),
+        #     },
+        # )
 
         return {
             "message": out["last_bot"],
@@ -833,6 +759,7 @@ async def reply(request: Request):
         raise HTTPException(status_code=500, detail="Failed to process message")
 
 
+# @trace  # Disabled with Highlight.io
 @app.post("/finish/{session_id}")
 async def finish(session_id: str):
     """End a session and calculate final metrics.
@@ -891,6 +818,7 @@ async def finish(session_id: str):
         raise HTTPException(status_code=500, detail="Failed to end session")
 
 
+# @trace  # Disabled with Highlight.io
 @app.post("/score")
 async def score(payload: Dict[str, Any]):
     """Calculate scenario score based on milestones and penalties.
@@ -953,6 +881,7 @@ async def score(payload: Dict[str, Any]):
 
 
 # New debug endpoints for development/testing
+# @trace  # Disabled with Highlight.io
 @app.get("/debug/session/{session_id}")
 async def debug_session(session_id: str):
     """Get detailed session information for debugging."""
@@ -978,6 +907,7 @@ async def debug_session(session_id: str):
 
 
 # Health check endpoint
+# @trace  # Disabled with Highlight.io
 @app.get("/health")
 async def health():
     """Basic health check endpoint."""
@@ -985,7 +915,7 @@ async def health():
         "status": "healthy",
         "timestamp": time.time(),
         "scenario_loaded": SCEN is not None,
-        "provider": _provider_meta(),  # <- new
+        # "provider": _provider_meta(),  # Function not defined
     }
 
 

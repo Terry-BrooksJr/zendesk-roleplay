@@ -1,6 +1,7 @@
 id: "lts-mismatch-render-manual-hints"
 seed_message: |
-  "I'm hitting critical issues with our Learnosity integration and we launch in 4 days. Our custom drag-and-drop questions aren't validating properly after we upgraded to 2025.1 LTS—the validation callback just never fires. Worked fine in 2024.2. And our progress tracking is completely unreliable—the progress bar jumps around randomly and we're hammering our backend with hundreds of requests per minute. I've been debugging this for 6 hours and I'm getting nowhere. I need solutions, not 'check the documentation' responses. This is make-or-break for our company."
+  ""I can't believe this is happening 72 hours before launch! We've got two critical issues breaking our production environment. First, the image alignment in our authored content just stopped working—instructors spent hours positioning images and now they're all wrong. Second, our session reports are throwing 'Session not found' errors even though we're passing valid session IDs. This is a complete mess and my team is panicking!"
+  Any ideas what could be going on, it is imperative this relaunch goes well for us?"
 
 milestones:
   - id: M1_goal
@@ -32,11 +33,8 @@ milestones:
     description: Proposes plausible resolution path
     intents_any: [ "propose_fix" ]
 
-challenge_injections:
-  - when: "off_track"
-    text: "I’m sure that shouldn’t matter—do you even know what I’m trying to fix?"
-    score_effect:
-      communication: -0.05
+artifacts:
+  har: "learnosity_validation_issue.har"
 
 rubric:
   weights:

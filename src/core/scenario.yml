@@ -32,12 +32,6 @@ milestones:
     description: Proposes plausible resolution path
     intents_any: [ "propose_fix" ]
 
-challenge_injections:
-  - when: "off_track"
-    text: "I’m sure that shouldn’t matter—do you even know what I’m trying to fix?"
-    score_effect:
-      communication: -0.05
-
 rubric:
   weights:
     discovery: 0.25 # M1 + M3
